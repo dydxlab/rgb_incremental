@@ -1,13 +1,14 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux'
+
 import counterReducer from '../features/counter/counterSlice';
-import counter1Reducer from '../features/gameState/counterSlice';
-import techTreeReducer from '../features/gameState/techTreeSlice';
+import gameStateReducer from '../features/gameState/gameStateSlice';
+
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
-    counter1: counter1Reducer,
-    techTree: techTreeReducer
+    gameState: gameStateReducer
   },
 });
 
