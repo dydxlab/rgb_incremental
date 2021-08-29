@@ -12,6 +12,7 @@ import {
   selectBlue,
   selectGreenFnP1,
   selectBlueDist,
+  selectBluePast,
   selectGreenDist,
   selectRedDist,
   selectLoopStarted
@@ -19,6 +20,7 @@ import {
 import styles from './Counter.module.css';
 
 import Plot from 'react-plotly.js';
+const pd = require('probability-distributions');
 
 
 function getCards() {
@@ -31,6 +33,41 @@ function getCards() {
   )
 }
 
+let xA: Array<number> = [];
+let yA: Array<number> = [];
+for (var i = 0; i < 20000; i ++) {
+	xA[i] = pd.rbeta(1, 0.5, 0.5)[0];
+	yA[i] = pd.rbeta(1, 0.5, 0.5)[0];
+}
+/**
+ <div className={styles.row}>
+      <Plot
+          data={[
+
+            {
+              type: 'histogram2dcontour', x:xA, y: yA
+            },
+          ]}
+          layout={{
+            width: 160, height: 120,
+
+            margin: {
+              l: 30,
+              r: 20,
+              b: 20,
+              t: 20,
+              pad: 4,
+
+            },
+          }}
+          config={{
+            'displayModeBar': false
+          }}
+        />
+      </div>
+ */
+
+
 /*cards.map((card) => return (
       <div>card</div>
   ))*/
@@ -41,6 +78,7 @@ export const Draft: FunctionComponent = () => {
   const greenDist = useAppSelector(selectGreenDist);
   const blue = useAppSelector(selectBlue);
   const blueDist = useAppSelector(selectBlueDist);
+  const bluePast = useAppSelector(selectBluePast);
   const loopStarted = useAppSelector(selectLoopStarted);
 
   const dispatch = useAppDispatch();
@@ -71,27 +109,29 @@ export const Draft: FunctionComponent = () => {
 
 
       </div>
+      
       <div className={styles.row}>
         <Plot
           data={[
 
             {
-              type: 'histogram', x: redDist, marker: {
+              type: 'scatter', y: redDist, marker: {
                 color: 'red',
               }
             },
           ]}
           layout={{
-            width: 320, height: 240,
+            width: 160, height: 120,
 
             margin: {
-              l: 0,
+              l: 30,
               r: 20,
               b: 20,
               t: 20,
               pad: 4,
 
             },
+            
           }}
           config={{
             'displayModeBar': false
@@ -102,14 +142,14 @@ export const Draft: FunctionComponent = () => {
           data={[
 
             {
-              type: 'histogram', x: greenDist, marker: {
+              type: 'scatter', y: greenDist, marker: {
                 color: 'limegreen',
               }
             },
           ]}
           layout={{
-            width: 320, height: 240, margin: {
-              l: 0,
+            width: 160, height: 120, margin: {
+              l: 30,
               r: 20,
               b: 20,
               t: 20,
@@ -124,33 +164,57 @@ export const Draft: FunctionComponent = () => {
         <Plot
           data={[
 
-            { type: 'histogram', x: blueDist },
+            {
+              type: 'histogram', orientation: 'h', y: blueDist,
+              xaxis: 'x2',
+              yaxis: 'y2'
+            },
+            { type: 'scatter', y: bluePast, marker: {color: 'steelblue' }},
           ]}
           layout={{
-            width: 320, height: 240, margin: {
-              l: 0,
+            width: 160, height: 120, margin: {
+              l: 40,
               r: 20,
               b: 20,
               t: 20,
               pad: 4
             },
+            showlegend: false,
+            xaxis: {
+              domain: [0, 0.7], 
+              zeroline: false
+            },
+            yaxis: {
+              zeroline: false
+            },
+            xaxis2: {
+              domain: [0.8, 1],
+              showticklabels: false
+            },
+            yaxis2: {
+              anchor: 'x2',
+              range: [0, 10],
+              showticklabels: false
+            }
           }}
           config={{
             'displayModeBar': false
           }}
         />
-      </div><div>
-        <button
-          className={styles.button}
-          aria-label="start"
-          onClick={initializeLoop}
-        >
-          Start
-        </button>
       </div>
+      {!loopStarted &&
+        <div>
 
-
-
+          <button
+            className={styles.button}
+            aria-label="start"
+            onClick={initializeLoop}
+          >
+            Start
+        </button>
+        </div>
+      }
+    
 
 
     </div>
