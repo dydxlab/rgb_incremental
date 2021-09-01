@@ -245,7 +245,7 @@ export const gameStateSlice = createSlice({
       if (action.payload.item) {
         let item = state.items[0]
         let currentItem = current(item)
-        if (!upgrade || !currentItem || action.payload.item !== currentItem) {
+        if (!item || !currentItem || action.payload.item !== currentItem) {
           return
         }
         if (!isCostSatisfiable(currentItem[0], state.resources)) {

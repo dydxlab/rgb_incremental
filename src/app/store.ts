@@ -3,12 +3,15 @@ import { combineReducers } from 'redux'
 
 import counterReducer from '../features/counter/counterSlice';
 import gameStateReducer from '../features/gameState/gameStateSlice';
+import cyoaStateReducer from '../features/gameState/cyoaSlice';
 
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
-    gameState: gameStateReducer
+    gameState: gameStateReducer,
+    cyoaState: cyoaStateReducer
+
   },
 });
 
