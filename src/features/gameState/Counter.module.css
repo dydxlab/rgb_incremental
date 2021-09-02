@@ -35,7 +35,7 @@
   padding-right: 4px;
   outline: none;
   border: 2px solid transparent;
-  color: rgb(112, 76, 182);
+  color: rgb(212, 212, 212);
   padding-bottom: 4px;
   cursor: pointer;
   background-color: rgba(112, 76, 182, 0.1);
@@ -53,7 +53,8 @@
 
 .button:hover,
 .button:focus {
-  border: 2px solid rgba(112, 76, 182, 0.4);
+  
+  background-color: rgba(112, 76, 182, 0.4);
 }
 
 .button:active {
