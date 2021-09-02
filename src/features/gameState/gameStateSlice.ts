@@ -4,7 +4,7 @@ import { RootState, AppThunk } from '../../app/store';
 const pd = require('probability-distributions');
 
 
-export type GSResourceName = "red" | "blue" | "green";
+export type GSResourceName = "red" | "blue" | "green" | "hp";
 
 
 let GreenUpgrade: [Record<GSResourceName, number>, boolean, GreenFnParams]
@@ -24,21 +24,21 @@ let Item: [Record<GSResourceName, number>, Record<GSResourceName, number>]
 //TODO INCORPORATE THESE
 function initializeTier1(): Array<typeof Item>{
   let itemsTier1: Array<Record<GSResourceName, number>> = [
-    { green: 0, red: 0, blue: 1 },
-    { green: 0, red: 19, blue: 0 },
-    { green: 42, red: 0, blue: 0 },
-    { green: 66, red: 0, blue: 0 },
-    { green: 20, red: 20, blue: 0 },
-    { green: 7, red: 2, blue: 0 },
+    { green: 0, red: 0, blue: 1, hp: 0 },
+    { green: 0, red: 19, blue: 0, hp: 0 },
+    { green: 42, red: 0, blue: 0, hp: 0 },
+    { green: 66, red: 0, blue: 0, hp: 0 },
+    { green: 20, red: 20, blue: 0, hp: 0 },
+    { green: 7, red: 2, blue: 0, hp: 10 },
   ]
 
   let costsTier1: Array< Record<GSResourceName, number>> = [
-    { green: 98, red: 0, blue: 0 },
-    { green: 117, red: 0, blue: 0 },
-    { green: 193, red: 0, blue: 0 },
-    { green: 338, red: 0, blue: 0 },
-    { green: 680, red: 0, blue: 0 },
-    { green: 1033, red: 0, blue: 0 },
+    { green: 65, red: 0, blue: 0, hp: 0  },
+    { green: 87, red: 0, blue: 0, hp: 0 },
+    { green: 123, red: 0, blue: 0, hp: 0 },
+    { green: 198, red: 0, blue: 0, hp: 0 },
+    { green: 270, red: 0, blue: 0, hp: 0 },
+    { green: 1033, red: 0, blue: 0, hp: 0 },
   ]
 
   itemsTier1 = shuffle(itemsTier1)
@@ -52,12 +52,12 @@ function initializeTier1(): Array<typeof Item>{
 
 
 let itemsTier2: Array<typeof ItemBonus> = [
-  { green: 0, red: 0, blue: 104 },
-  { green: 0, red: 290, blue: 0 },
-  { green: 4255, red: 0, blue: 0 },
-  { green: 660, red: 0, blue: 0 },
-  { green: 808, red: 935  , blue: 0 },
-  { green: 7, red: 2, blue: 0 },
+  { green: 0, red: 0, blue: 104, hp: 0 },
+  { green: 0, red: 290, blue: 0, hp: 0 },
+  { green: 4255, red: 0, blue: 0, hp: 0 },
+  { green: 660, red: 0, blue: 0, hp: 24 },
+  { green: 808, red: 935  , blue: 0, hp: 0 },
+  { green: 7, red: 2, blue: 0, hp: 0 },
 ]
 
 
@@ -112,12 +112,26 @@ function blueFn(params: BlueFnParams) {
   return total
 }
 
+export interface HPFnParams {
+  linearP1: number;
+}
+
+function hpFn(params: HPFnParams) {
+  let total = 0
+  if (params.linearP1) {
+    total += params.linearP1
+  }
+
+  return total
+}
+
 export interface GameState {
   resources: Record<GSResourceName, number>;
   items: Array<typeof Item>;
   redFnParams: RedFnParams;
   greenFnParams: GreenFnParams;
   blueFnParams: BlueFnParams;
+  hpFnParams: HPFnParams;
   loopStarted: boolean;
   greenUpgrades: Array<typeof GreenUpgrade>;
   redUpgrades: Array<typeof RedUpgrade>;
@@ -131,44 +145,46 @@ export interface GameState {
 const initialState: GameState = {
   resources: {
     red: 0,
-    green: 2000, // 20
+    green: 20, // 20
     blue: 3,
+    hp: 100
   },
   items: initializeTier1(),
   redFnParams: { linearP1: 1 },
   greenFnParams: { linearP1: 2, quadraticP1: 0, twoPowerP1: 0 },
   blueFnParams: { normalP1: 0, normalP2: 0 },
+  hpFnParams: { linearP1: 0.1 },
   blueDist: [0, 0, 0, 0],
   bluePast: [...Array(40).keys()].map(i => 0),
   greenDist: [...Array(40).keys()].map(i => 0),
   redDist: [...Array(40).keys()].map(i => 0),
   loopStarted: false,
   greenUpgrades: [
-    [{ green: 13, red: 0, blue: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }],
-    [{ green: 29, red: 0, blue: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }],
-    [{ green: 105, red: 0, blue: 0 }, false, { linearP1: 4, quadraticP1: 0, twoPowerP1: 0 }],
-    [{ green: 82, red: 0, blue: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 0 }],
-    [{ green: 379, red: 0, blue: 0 }, false, { linearP1: 0, quadraticP1: 3, twoPowerP1: 0 }],
-    [{ green: 1800, red: 0, blue: 7 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }],
-    [{ green: 500000, red: 100, blue: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 2 }],
-    [{ green: 1000000000, red: 0, blue: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }],
+    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }],
+    [{ green: 29, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }],
+    [{ green: 105, red: 0, blue: 0, hp: 0 }, false, { linearP1: 4, quadraticP1: 0, twoPowerP1: 0 }],
+    [{ green: 82, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 0 }],
+    [{ green: 379, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0, quadraticP1: 3, twoPowerP1: 0 }],
+    [{ green: 1800, red: 0, blue: 7, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }],
+    [{ green: 500000, red: 100, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 2 }],
+    [{ green: 1000000000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }],
 
   ],
   redUpgrades: [
-    [{ green: 13, red: 0, blue: 0 }, false, { linearP1: 0.3 }],
-    [{ green: 37, red: 0, blue: 1 }, false, { linearP1: 0.3 }],
-    [{ green: 105, red: 0, blue: 3 }, false, { linearP1: 4 }],
-    [{ green: 10, red: 0, blue: 0 }, false, { linearP1: 0.3 }],
-    [{ green: 7000, red: 0, blue: 0 }, false, { linearP1: 8 }],
-    [{ green: 61589, red: 0, blue: 55 }, false, { linearP1: 22 }],
+    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }],
+    [{ green: 37, red: 0, blue: 1, hp: 0 }, false, { linearP1: 0.3 }],
+    [{ green: 105, red: 0, blue: 3, hp: 0 }, false, { linearP1: 4 }],
+    [{ green: 10, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }],
+    [{ green: 7000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 8 }],
+    [{ green: 61589, red: 0, blue: 55, hp: 0 }, false, { linearP1: 22 }],
 
   ],
   blueUpgrades: [
-    [{ green: 9, red: 45, blue: 0 }, false, { normalP1: 0.0002, normalP2: 0.0001 }],
-    [{ green: 499, red: 0, blue: 2 }, false, { normalP1: 0, normalP2: 0.5 }],
-    [{ green: 0, red: 389, blue: 21 }, false, { normalP1: 2, normalP2: 0 }],
-    [{ green: 0, red: 0, blue: 131 }, false, { normalP1: 0, normalP2: 10 }],
-    [{ green: 0, red: 0, blue: 305 }, false, { normalP1: 0, normalP2: 10 }],
+    [{ green: 9, red: 45, blue: 0, hp: 0 }, false, { normalP1: 0.0002, normalP2: 0.0001 }],
+    [{ green: 499, red: 0, blue: 2, hp: 0 }, false, { normalP1: 0, normalP2: 0.5 }],
+    [{ green: 0, red: 389, blue: 21, hp: 0 }, false, { normalP1: 2, normalP2: 0 }],
+    [{ green: 0, red: 0, blue: 131, hp: 0 }, false, { normalP1: 0, normalP2: 10 }],
+    [{ green: 0, red: 0, blue: 305, hp: 0 }, false, { normalP1: 0, normalP2: 10 }],
   ]
 
 
@@ -241,6 +257,10 @@ export const gameStateSlice = createSlice({
       state.greenDist.push(state.resources.green);
       state.greenDist.shift();
     },
+    incrementHP: (state) => {
+      state.resources.hp -= hpFn(state.hpFnParams);
+      
+    },
     buyItem: (state, action) => {
       if (action.payload.item) {
         let item = state.items[0]
@@ -307,7 +327,7 @@ declare global {
 }
 
 
-export const { incrementRed, startLoop, incrementGreen, incrementBlue, buyItem, upgrade } = gameStateSlice.actions;
+export const { incrementRed, startLoop, incrementGreen, incrementBlue, incrementHP, buyItem, upgrade } = gameStateSlice.actions;
 
 // The function below is called a selector and allows us to select a red from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -315,6 +335,7 @@ export const { incrementRed, startLoop, incrementGreen, incrementBlue, buyItem, 
 export const selectRed = (state: RootState) => state.gameState.resources.red;
 export const selectBlue = (state: RootState) => state.gameState.resources.blue;
 export const selectGreen = (state: RootState) => state.gameState.resources.green;
+export const selectHP = (state: RootState) => state.gameState.resources.hp;
 export const selectGreenFnP1 = (state: RootState) => state.gameState.greenFnParams.linearP1;
 
 export const selectLoopStarted = (state: RootState) => state.gameState.loopStarted;

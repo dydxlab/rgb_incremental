@@ -1,21 +1,104 @@
 import React from 'react';
 import logo from './Beetle.png';
-import { Counter } from './features/counter/Counter';
 import { CYOA } from './features/gameState/CYOA';
 import { Draft } from './features/gameState/Draft';
+import { GameOver } from './features/gameState/GameOver';
 import { TechTree } from './features/gameState/TechTree';
 import './App.css';
+import Particles from "react-tsparticles";
+
+
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+      <Particles
+      id="tsparticles"
+      options={{
+        fullScreen: {
+          enable: true,
+          zIndex: 0
+        },
+        background: {
+          color: {
+            value: "rgb(147,70,17)",
+          },
+          
+          opacity: 0.01
+        },
+        fpsLimit: 60,
+        interactivity: {
+          detectsOn: "canvas",
+          modes: {
+            bubble: {
+              distance: 400,
+              duration: 2,
+              opacity: 0.2,
+              size: 10,
+            },
+            push: {
+              quantity: 4,
+            },
+            repulse: {
+              distance: 200,
+              duration: 0.4,
+            },
+          },
+        },
+        particles: {
+          color: {
+            value: [
+              "#921212",
+              "#9e1b3e",
+              "#c3711a",
+              "#ff6b00"
+            ]
+
+          },
+        
+          collisions: {
+            enable: false,
+          },
+          move: {
+            direction: "none",
+            enable: true,
+            outMode: "out",
+            random: true,
+            speed: 4,
+            straight: false,
+          },
+          number: {
+            density: {
+              enable: true,
+              value_area: 800,
+            },
+            value: 8,
+          },
+          opacity: {
+            value: 0.5,
+          },
+          shape: {
+            type: "circle",
+          },
+          size: {
+            random: true,
+            value: 5,
+          },
+        },
+        detectRetina: true,
+      }}
+      
+      >
+        </Particles>
+      <header className="App-header" >
         <img src={logo} className="App-logo" alt="logo" />
+        <div style={{zIndex: 1}}>
         <CYOA />
         <Draft />
         <TechTree />
-        
+        </div>
       </header>
+      
     </div>
   );
 }

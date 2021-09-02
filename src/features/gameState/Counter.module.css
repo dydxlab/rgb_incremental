@@ -13,6 +13,12 @@
   margin-bottom: 16px;
 }
 
+.endScreen {
+  font-family: Georgia, serif;
+  font-size: 200px;
+  padding: 20px;
+}
+
 .value {
   font-size: 78px;
   padding-left: 16px;
