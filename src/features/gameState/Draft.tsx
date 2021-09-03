@@ -81,6 +81,8 @@ export const Draft: FunctionComponent = () => {
   const blueDist = useAppSelector(selectBlueDist);
   const bluePast = useAppSelector(selectBluePast);
   const loopStarted = useAppSelector(selectLoopStarted);
+  const audio = new Audio("/impromptu_lower_bitrate.mp3")
+
 
   const dispatch = useAppDispatch();
   const [incrementAmount, setIncrementAmount] = useState('2');
@@ -95,6 +97,8 @@ export const Draft: FunctionComponent = () => {
       setInterval(() => dispatch(incrementGreen()), 1000);
       setInterval(() => dispatch(incrementBlue()), 1000);
       setInterval(() => dispatch(incrementHP()), 1000);
+      audio.volume = 0.2;
+      audio.play();
     }
   }
 
@@ -124,8 +128,8 @@ export const Draft: FunctionComponent = () => {
           ]}
           layout={{
             width: 160, height: 120,
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(255,255,255,0.0)',
+            paper_bgcolor: 'rgba(255,255,255,0.3)',
             margin: {
               l: 30,
               r: 20,
@@ -134,6 +138,12 @@ export const Draft: FunctionComponent = () => {
               pad: 4,
 
             },
+            xaxis: {
+              color: 'white'
+            },
+            yaxis: {
+              color: 'white'
+            }
             
           }}
           config={{
@@ -151,8 +161,8 @@ export const Draft: FunctionComponent = () => {
             },
           ]}
           layout={{
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(255,255,255,0.0)',
+            paper_bgcolor: 'rgba(255,255,255,0.3)',
             width: 160, height: 120, margin: {
               l: 30,
               r: 20,
@@ -177,8 +187,8 @@ export const Draft: FunctionComponent = () => {
             { type: 'scatter', y: bluePast, marker: {color: 'steelblue' }},
           ]}
           layout={{
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(255,255,255,0.0)',
+            paper_bgcolor: 'rgba(255,255,255,0.3)',
             width: 160, height: 120, margin: {
               l: 40,
               r: 20,

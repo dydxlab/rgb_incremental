@@ -25,6 +25,8 @@
   padding-right: 16px;
   margin-top: 2px;
   font-family: 'Courier New', Courier, monospace;
+
+
 }
 
 .button {
@@ -39,6 +41,7 @@
   padding-bottom: 4px;
   cursor: pointer;
   background-color: rgba(112, 76, 182, 0.1);
+  font-weight: 600;
   border-radius: 2px;
   transition: all 0.15s;
 }
@@ -87,4 +90,34 @@
 
 .modebar-container {
   display: none;
+}
+
+
+.hpheart {
+  height: 32px; 
+  width: 32px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hpheart {
+    animation: hpheartthrob infinite 3s ease-in-out;
+  }
+}
+
+@keyframes hpheartthrob {
+  0% {
+    transform: scale(0.90);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(0.9);
+  }
 }

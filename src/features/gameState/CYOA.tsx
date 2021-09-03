@@ -19,13 +19,15 @@ export const CYOA: FunctionComponent = () => {
 
     return (
         <div>
-        <h1>Quest - <span style={{ 'color': 'red' }}>{ Math.round(hp * 10) / 10 } </span> </h1>
+        <h1 style={{ 'color': 'rgb(255, 255, 255)'}}>Quest - <span style={{ 'color': 'red' }}>{ Math.round(hp * 10) / 10 }         
+        <img src="/hp-heart.svg" alt="heart" className={styles.hpheart} />
+</span> </h1>
         <div className={styles.row}>
             
             {options && options.map(option =>
             (
                 <div>
-                    <p>{option.title} </p>
+                    <h3 style={{ 'color': 'rgb(255, 255, 255)'}}>{option.title} </h3>
                     <button
                         className={styles.button}
                         onClick={() => dispatch(step({"choice": option}))}

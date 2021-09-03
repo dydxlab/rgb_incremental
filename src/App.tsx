@@ -12,6 +12,7 @@ import Particles from "react-tsparticles";
 function App() {
   return (
     <div className="App">
+      
       <Particles
       id="tsparticles"
       options={{
@@ -35,14 +36,7 @@ function App() {
               duration: 2,
               opacity: 0.2,
               size: 10,
-            },
-            push: {
-              quantity: 4,
-            },
-            repulse: {
-              distance: 200,
-              duration: 0.4,
-            },
+            }, 
           },
         },
         particles: {
@@ -78,12 +72,23 @@ function App() {
             value: 0.5,
           },
           shape: {
-            type: "circle",
+            type: ["polygon", "circle"],
           },
           size: {
             random: true,
             value: 5,
           },
+          rotate: {
+            direction: "clockwise",
+            animation: {
+              enable: true,
+              speed: 8
+            }
+          },
+          zIndex: {
+            opacityRate: 0.2,
+            sizeRate: 0.5
+          }
         },
         detectRetina: true,
       }}
@@ -91,8 +96,10 @@ function App() {
       >
         </Particles>
       <header className="App-header" >
+      
+        
+        <div style={{zIndex: 1, backgroundColor: 'rgba(85, 85, 85, 0.3)'}}>
         <img src={logo} className="App-logo" alt="logo" />
-        <div style={{zIndex: 1}}>
         <CYOA />
         <Draft />
         <TechTree />
