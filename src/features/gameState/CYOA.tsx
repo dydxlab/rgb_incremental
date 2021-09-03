@@ -20,7 +20,7 @@ export const CYOA: FunctionComponent = () => {
     return (
         <div>
         <h1 style={{ 'color': 'rgb(255, 255, 255)'}}>Quest - <span style={{ 'color': 'red' }}>{ Math.round(hp * 10) / 10 }         
-        <img src="/hp-heart.svg" alt="heart" className={styles.hpheart} />
+        <img src="./hp-heart.svg" alt="heart" className={styles.hpheart} />
 </span> </h1>
         <div className={styles.row}>
             
