@@ -81,11 +81,31 @@ export const Draft: FunctionComponent = () => {
   const blueDist = useAppSelector(selectBlueDist);
   const bluePast = useAppSelector(selectBluePast);
   const loopStarted = useAppSelector(selectLoopStarted);
-  const audio = new Audio("/impromptu_lower_bitrate.mp3")
+  const audio = new Audio("./impromptu_lower_bitrate.mp3")
 
 
   const dispatch = useAppDispatch();
   const [incrementAmount, setIncrementAmount] = useState('2');
+  const plotlyLayout = {
+    width: 160, height: 120,
+    plot_bgcolor: 'rgba(255,255,255,0.0)',
+    paper_bgcolor: 'rgba(255,255,255,0.3)',
+    margin: {
+      l: 30,
+      r: 20,
+      b: 20,
+      t: 20,
+      pad: 4,
+
+    },
+    xaxis: {
+      color: 'white'
+    },
+    yaxis: {
+      color: 'white'
+    }
+    
+  }
 
   //  onClick={() => dispatch(incrementAsync(incrementred))}
 
@@ -126,26 +146,8 @@ export const Draft: FunctionComponent = () => {
               }
             },
           ]}
-          layout={{
-            width: 160, height: 120,
-            plot_bgcolor: 'rgba(255,255,255,0.0)',
-            paper_bgcolor: 'rgba(255,255,255,0.3)',
-            margin: {
-              l: 30,
-              r: 20,
-              b: 20,
-              t: 20,
-              pad: 4,
-
-            },
-            xaxis: {
-              color: 'white'
-            },
-            yaxis: {
-              color: 'white'
-            }
-            
-          }}
+          
+          layout={plotlyLayout}
           config={{
             'displayModeBar': false
           }}
@@ -160,17 +162,7 @@ export const Draft: FunctionComponent = () => {
               }
             },
           ]}
-          layout={{
-            plot_bgcolor: 'rgba(255,255,255,0.0)',
-            paper_bgcolor: 'rgba(255,255,255,0.3)',
-            width: 160, height: 120, margin: {
-              l: 30,
-              r: 20,
-              b: 20,
-              t: 20,
-              pad: 4
-            },
-          }}
+          layout={plotlyLayout}
           config={{
             'displayModeBar': false
           }}
@@ -199,16 +191,20 @@ export const Draft: FunctionComponent = () => {
             showlegend: false,
             xaxis: {
               domain: [0, 0.7], 
+              color: 'white',
               zeroline: false
             },
             yaxis: {
+              color: 'white',
               zeroline: false
             },
             xaxis2: {
+              color: 'white',
               domain: [0.8, 1],
               showticklabels: false
             },
             yaxis2: {
+              color: 'white',
               anchor: 'x2',
               range: [0, 10],
               showticklabels: false
