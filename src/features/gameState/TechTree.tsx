@@ -8,18 +8,13 @@ import {
     selectItemCost,
     upgrade,
     GSResourceName,
-    buyItem
+    buyItem,
+    
 } from './gameStateSlice';
+import {getCostString} from './Utils'
 import styles from './Counter.module.css';
 
-function getCostString(cost: Record<GSResourceName, number>) {
-    return (<span>
-        {cost.green > 0 && <span>{cost.green}<span style={{ color: 'limegreen' }}>G  </span></span>}
-        {cost.blue > 0 && <span>{cost.blue}<span style={{ color: 'blue' }}>B  </span></span>}
-        {cost.red > 0 && <span>{cost.red}<span style={{ color: 'red' }}>R  </span></span>}
-    </span>)
 
-}
 
 export const TechTree: FunctionComponent = () => {
     const greenUpgradeCost = useAppSelector(selectGreenUpgradeCost);

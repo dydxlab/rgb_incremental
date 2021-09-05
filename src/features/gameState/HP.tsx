@@ -2,14 +2,13 @@ import React, { useState, FunctionComponent } from 'react';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
-    selectNextOptions,
-    step
-} from './cyoaSlice';
+    selectNextDoors,
+    stepQuest
+} from './gameStateSlice';
 import styles from './Counter.module.css';
 
 export const CYOA: FunctionComponent = () => {
-    /*onClick={() => dispatch(upgrade({'green': greenUpgradeCost}))}*/
-    let options = useAppSelector(selectNextOptions)
+    let options = useAppSelector(selectNextDoors)
     const dispatch = useAppDispatch();
 
 
@@ -24,7 +23,7 @@ export const CYOA: FunctionComponent = () => {
                     <p>{option.title} </p>
                     <button
                         className={styles.button}
-                        onClick={() => dispatch(step({"choice": option}))}
+                        onClick={() => dispatch(stepQuest({"choice": option}))}
 
                     >
                         {option.action}

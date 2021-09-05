@@ -7,6 +7,8 @@ import {
   incrementGreen,
   incrementBlue,
   incrementHP,
+  setGameLoopIntervals,
+  clearGameLoopIntervals,
   startLoop,
   selectRed,
   selectGreen,
@@ -16,7 +18,7 @@ import {
   selectBluePast,
   selectGreenDist,
   selectRedDist,
-  selectLoopStarted
+  selectGameStatus
 } from './gameStateSlice';
 import styles from './Counter.module.css';
 
@@ -36,9 +38,9 @@ function getCards() {
 
 let xA: Array<number> = [];
 let yA: Array<number> = [];
-for (var i = 0; i < 20000; i ++) {
-	xA[i] = pd.rbeta(1, 0.5, 0.5)[0];
-	yA[i] = pd.rbeta(1, 0.5, 0.5)[0];
+for (var i = 0; i < 20000; i++) {
+  xA[i] = pd.rbeta(1, 0.5, 0.5)[0];
+  yA[i] = pd.rbeta(1, 0.5, 0.5)[0];
 }
 /**
  <div className={styles.row}>
@@ -80,7 +82,7 @@ export const Draft: FunctionComponent = () => {
   const blue = useAppSelector(selectBlue);
   const blueDist = useAppSelector(selectBlueDist);
   const bluePast = useAppSelector(selectBluePast);
-  const loopStarted = useAppSelector(selectLoopStarted);
+  const gameStatus = useAppSelector(selectGameStatus);
   const audio = new Audio("./impromptu_lower_bitrate.mp3")
 
 
@@ -104,19 +106,24 @@ export const Draft: FunctionComponent = () => {
     yaxis: {
       color: 'white'
     }
-    
+
   }
 
   //  onClick={() => dispatch(incrementAsync(incrementred))}
 
   function initializeLoop() {
     // start timer after button is clicked
-    if (!loopStarted) {
-      dispatch(startLoop())
-      setInterval(() => dispatch(incrementRed()), 1000);
-      setInterval(() => dispatch(incrementGreen()), 1000);
-      setInterval(() => dispatch(incrementBlue()), 1000);
-      setInterval(() => dispatch(incrementHP()), 1000);
+    if (gameStatus == 'ready') {
+      dispatch(startLoop());
+      dispatch(clearGameLoopIntervals());
+      let intval = setInterval(() => {
+          dispatch(incrementRed());
+          dispatch(incrementGreen());
+          dispatch(incrementBlue());
+          dispatch(incrementHP());
+        },
+        1000);
+      dispatch(setGameLoopIntervals(intval))
       audio.volume = 0.2;
       audio.play();
     }
@@ -135,7 +142,7 @@ export const Draft: FunctionComponent = () => {
 
 
       </div>
-      
+
       <div className={styles.row}>
         <Plot
           data={[
@@ -146,7 +153,7 @@ export const Draft: FunctionComponent = () => {
               }
             },
           ]}
-          
+
           layout={plotlyLayout}
           config={{
             'displayModeBar': false
@@ -176,7 +183,7 @@ export const Draft: FunctionComponent = () => {
               xaxis: 'x2',
               yaxis: 'y2'
             },
-            { type: 'scatter', y: bluePast, marker: {color: 'steelblue' }},
+            { type: 'scatter', y: bluePast, marker: { color: 'steelblue' } },
           ]}
           layout={{
             plot_bgcolor: 'rgba(255,255,255,0.0)',
@@ -190,7 +197,7 @@ export const Draft: FunctionComponent = () => {
             },
             showlegend: false,
             xaxis: {
-              domain: [0, 0.7], 
+              domain: [0, 0.7],
               color: 'white',
               zeroline: false
             },
@@ -215,7 +222,7 @@ export const Draft: FunctionComponent = () => {
           }}
         />
       </div>
-      {!loopStarted &&
+      {gameStatus == 'ready' &&
         <div>
 
           <button
@@ -227,7 +234,7 @@ export const Draft: FunctionComponent = () => {
         </button>
         </div>
       }
-    
+
 
 
     </div>

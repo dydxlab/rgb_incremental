@@ -100,9 +100,7 @@ function App() {
         
         <div style={{zIndex: 1, backgroundColor: 'rgba(85, 85, 85, 0.3)'}}>
         <img src={logo} className="App-logo" alt="logo" />
-        <CYOA />
-        <Draft />
-        <TechTree />
+        <GameOver />
         </div>
       </header>
       
