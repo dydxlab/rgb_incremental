@@ -7,10 +7,9 @@ import {
     selectBlueUpgradeCost,
     selectItemCost,
     upgrade,
-    GSResourceName,
     buyItem,
-    
 } from './gameStateSlice';
+import {GSResourceName} from './Types'
 import {getCostString} from './Utils'
 import styles from './Counter.module.css';
 

@@ -1,221 +1,53 @@
+import { types } from '@babel/core';
 import { createAsyncThunk, createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-//import {rbeta} from 'probability-distributions'
-const pd = require('probability-distributions');
+import {Spell, 
+  Cost, 
+  GreenFnParams, 
+  BlueFnParams, 
+  RedFnParams,  
+redFn, 
+blueFn, 
+greenFn, 
+hpFn, 
+ResourceBonus, 
+Room, 
+QuestStep, 
+CYOAOption, 
+StructureStatus, 
+GSResourceName, 
+HPFnParams, 
+GameStatus, 
+combineRedParams, 
+combineBlueParams, 
+combineGreenParams, 
+addResources, 
+removeResources, 
+isCostSatisfiable,
+} from './Types'
+import {initializeTier1, Item, } from './Items'
+import {jungleRoom, quest2, roomInteractions, doorInteractions} from './Quest'
 
 
-export type GSResourceName = "red" | "blue" | "green" | "hp";
-export type GameStatus = "ready" | "started" | "victory" | "gameOver";
-export type StructureStatus = "burnt" | "frozen" | "flourishing";
-
-export type Cost = Record<GSResourceName, number>
-export type ResourceBonus = Record<GSResourceName, number>
 
 let GreenUpgrade: [Cost, boolean, GreenFnParams]
 let BlueUpgrade: [Cost, boolean, BlueFnParams]
 let RedUpgrade: [Cost, boolean, RedFnParams]
 
-export interface Spell {
-  description?: String;
-  cooldown?: number;
-  available?: boolean;
-}
 
 let spells1: Array<Spell> = [
   {description: 'Fireball', cooldown: 5000, available: true, },
   {description: 'Commune with Plants', cooldown: 1000, available: true},
   {description: 'Heal', },
-  {description: 'Frost Ray', },
-  {description: 'Spectral Rope', }
-]
-
-function shuffle<T>(a: Array<T>): Array<T> {
-  for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-let Item: [Cost, ResourceBonus]
-
-function initializeTier1(): Array<typeof Item>{
-  let itemsTier1: Array<ResourceBonus> = [
-    { green: 0, red: 0, blue: 1, hp: 0 },
-    { green: 0, red: 19, blue: 0, hp: 0 },
-    { green: 42, red: 0, blue: 0, hp: 0 },
-    { green: 66, red: 0, blue: 0, hp: 0 },
-    { green: 20, red: 20, blue: 0, hp: 0 },
-    { green: 7, red: 2, blue: 0, hp: 10 },
-  ]
-
-  let costsTier1: Array<Cost> = [
-    { green: 65, red: 0, blue: 0, hp: 0  },
-    { green: 87, red: 0, blue: 0, hp: 0 },
-    { green: 123, red: 0, blue: 0, hp: 0 },
-    { green: 198, red: 0, blue: 0, hp: 0 },
-    { green: 270, red: 0, blue: 0, hp: 0 },
-    { green: 1033, red: 0, blue: 0, hp: 0 },
-  ]
-
-  itemsTier1 = shuffle(itemsTier1)
-  let items: Array<typeof Item> = []
-  for( let i in costsTier1){
-    items.push([costsTier1[i], itemsTier1[i]]);
-  }
-  return items
-}
-
-
-
-let itemsTier2: Array<ResourceBonus> = [
-  { green: 0, red: 0, blue: 104, hp: 0 },
-  { green: 0, red: 290, blue: 0, hp: 0 },
-  { green: 4255, red: 0, blue: 0, hp: 0 },
-  { green: 660, red: 0, blue: 0, hp: 24 },
-  { green: 808, red: 935  , blue: 0, hp: 0 },
-  { green: 7, red: 2, blue: 0, hp: 0 },
+  {description: 'Frost Ray', available: true, },
+  {description: 'Spectral Rope', available: true, }
 ]
 
 
-export interface CYOAOption {
-  description?: String;
-  title?: String;
-  action?: String;
-  image?: String;
-  cost: Cost;
-  statuses: Array<StructureStatus>;
-}
-
-export interface QuestStep {
-  options: Array<CYOAOption>;
-  active: boolean;
-}
 
 
-function jungleRoomInteraction(state, spell){
-  let l = current(state)
-  console.log('ssh')
-  if(spell.description === 'Fireball' && !state.room.statuses.includes('burnt')){
-    state.room.statuses.push('burnt');
-    state.redFnParams = combineRedParams({ linearP1: 3 }, state.redFnParams)
-    state.combatLogMessages.push('You feed on the energy from the withering vines')
-  } else if (spell.description === 'Commune with Plants' && !state.room.statuses.includes('burnt')) {
-      state.combatLogMessages.push('Vines sway in sync and you hear a whisper "Seek the golden slug"')
-  } else {
-      state.combatLogMessages.push('No effect')
-  }
-}
-
-function caveDoorInteraction(state, spell) {
-  if(spell.type === 'Commune with Plants'){
-      state.combatLogMessages.push('A phosphorescent mushroom breathes in and lets out a puff of spores in the shape of a bridge and rope')
-      //return {'message': 'A phosphorescent mushroom breathes in and lets out a puff of spores in the shape of a bridge and rope'}
-  } else {
-    state.combatLogMessages.push("No effect");
-  }
-}
-
-function desertDoorInteraction(state, spell){
-  if(spell.type === 'Fireball'){
-    state.combatLogMessages.push('Flames dance across the sand haplessly');
-  } else {
-    state.combatLogMessages.push('No effect');
-  }
-}
 
 
-let roomInteractions = {
-  'Jungle': jungleRoomInteraction,
-}
-
-let doorInteractions = {
-  'Cave': caveDoorInteraction,
-  'Desert': desertDoorInteraction
-}
-
-
-let quest1: Array<QuestStep> = [
-  {options: [{title:"Puzzle", action: "Solve it", cost: { green: 0, red: 0, blue: 19, hp: 0  }, statuses: new Array<StructureStatus>()}, {title:"Battle", action: "Fight him", cost: { green: 0, red: 340, blue: 0, hp: 0  }, statuses: new Array<StructureStatus>()}], active: true},
-  {options: [{title:"Jungle", action: "Swing from vine to vine", cost: { green: 50120, red: 0, blue: 0, hp: 0  }, statuses: new Array<StructureStatus>()}, {title:"Desert", action: "Brave the wastes", cost: { green: 19439, red: 800, blue: 290, hp: 0  }, statuses: new Array<StructureStatus>()}], active: true},
-  {options: [{title:"Lions", action: "Wrestle them to the ground", cost: { green: 19478, red: 0, blue: 0, hp: 0  }, statuses: new Array<StructureStatus>()}, {title:"Bears", action: "Punch them in the face", cost: { green: 0, red: 8905, blue: 0, hp: 0  }, statuses: new Array<StructureStatus>()}], active: true}
-]
-
-let quest2: Array<QuestStep> = [
-  {options: [{title:"Cave", action: "Delve deeper", cost: { green: 50120, red: 0, blue: 0, hp: 0  }, statuses: new Array<StructureStatus>()}, {title:"Desert", action: "Brave the wastes", cost: { green: 19439, red: 800, blue: 290, hp: 0  }, statuses: new Array<StructureStatus>()}], active: true},
-]
-
-export interface Room {
-  statuses: Array<StructureStatus>;
-  options: Array<CYOAOption>;
-  name: String;
-}
-
-let jungleRoom: Room = {
-  name: 'Jungle',
-  statuses: new Array<StructureStatus>(),
-  options: Object.assign([], quest2[0].options)
-}
-
-export interface GreenFnParams {
-  linearP1: number;
-  quadraticP1: number;
-  twoPowerP1: number;
-}
-
-function greenFn(params: GreenFnParams) {
-  let total = 0.0
-  if (params.linearP1) {
-    total += params.linearP1
-  }
-  if (params.quadraticP1) {
-    total += (params.quadraticP1 * params.quadraticP1)
-  }
-  if (params.twoPowerP1) {
-    total += (Math.pow(2, params.twoPowerP1))
-  }
-  return total
-}
-
-export interface RedFnParams {
-  linearP1: number;
-}
-
-function redFn(params: RedFnParams) {
-  let total = 0
-  if (params.linearP1) {
-    total += params.linearP1
-  }
-
-  return total
-}
-
-
-export interface BlueFnParams {
-  normalP1: number;
-  normalP2: number;
-}
-
-function blueFn(params: BlueFnParams) {
-  let total = 0.0
-  if (params.normalP1 > 0 && params.normalP2 > 0) {
-    total += Math.max(0, pd.rnorm(1,params.normalP1, params.normalP2))
-  }
-
-  return total
-}
-
-export interface HPFnParams {
-  linearP1: number;
-}
-
-function hpFn(params: HPFnParams) {
-  let total = 0
-  if (params.linearP1) {
-    total += params.linearP1
-  }
-
-  return total
-}
 
 
 export interface GameState {
@@ -242,15 +74,15 @@ export interface GameState {
 
 const initialState: GameState = {
   resources: {
-    red: 100000000000000,
-    green: 2000000000000, // 20
-    blue: 30000000000000,
+    red: 0,
+    green: 20, // 20
+    blue: 3, //3
     hp: 100
   },
   room: jungleRoom,
   gameLoopInterval: 0,
   questSteps: quest2,
-  availableSpells: [spells1[0], spells1[1]],
+  availableSpells: spells1,
   items: initializeTier1(),
   redFnParams: { linearP1: 1 },
   greenFnParams: { linearP1: 2, quadraticP1: 0, twoPowerP1: 0 },
@@ -293,47 +125,7 @@ const initialState: GameState = {
 
 };
 
-function isCostSatisfiable(cost: Cost, resources: Record<GSResourceName, number>): boolean {
-  for (let c in cost) {
-    if (cost[c as keyof typeof cost] > resources[c as keyof typeof resources]) return false
-  }
-  return true
-}
 
-function removeResources(cost: Cost, resources: Record<GSResourceName, number>) {
-  for (let c in cost) {
-    resources[c as keyof typeof resources] -= cost[c as keyof typeof cost]
-  }
-  return resources
-}
-
-function addResources(cost: Cost, resources: Record<GSResourceName, number>) {
-  for (let c in cost) {
-    resources[c as keyof typeof resources] += cost[c as keyof typeof cost]
-  }
-  return resources
-}
-
-function combineGreenParams(a: GreenFnParams, b: GreenFnParams): GreenFnParams {
-  for (let i in a) {
-    a[i as keyof typeof a] = a[i as keyof typeof a] + b[i as keyof typeof b]
-  }
-  return a
-}
-
-function combineRedParams(a: RedFnParams, b: RedFnParams): RedFnParams {
-  for (let i in a) {
-    a[i as keyof typeof a] = a[i as keyof typeof a] + b[i as keyof typeof b]
-  }
-  return a
-}
-
-function combineBlueParams(a: BlueFnParams, b: BlueFnParams): BlueFnParams {
-  for (let i in a) {
-    a[i as keyof typeof a] = a[i as keyof typeof a] + b[i as keyof typeof b]
-  }
-  return a
-}
 const initialStateCopy = Object.assign({}, initialState)
 
 export const gameStateSlice = createSlice({
@@ -354,15 +146,20 @@ export const gameStateSlice = createSlice({
     },
     castSpell: (state, payload) => {
       if(payload){
-        let spell = state.availableSpells.find(x => x.description == payload.payload.description)
+        let spell = state.availableSpells.find(x => x.description === payload.payload.description)
         if(spell) {
           spell.available = false
           handleSpell(state, spell)
         }
       }
     },
-    resetSpell: (state) => {
-      state.availableSpells[0].available = true
+    resetSpell: (state, payload) => {
+      if(payload){
+        let spell = state.availableSpells.find(x => x.description === payload.payload.description)
+        if(spell) {
+          spell.available = true
+        }
+      }
     },
     incrementBlue: (state) => {
       state.resources.blue += blueFn(state.blueFnParams);
@@ -388,6 +185,9 @@ export const gameStateSlice = createSlice({
     clearGameLoopIntervals: (state) => {
       clearInterval(state.gameLoopInterval);
       state.gameLoopInterval = 0;
+    },
+    clearCombatLogMessages: (state) => {
+      state.combatLogMessages = []
     },
     buyItem: (state, action) => {
       if (action.payload.item) {
@@ -483,15 +283,14 @@ function handleSpell(state, spell) {
   console.log(current(state.combatLogMessages))
 }
 
-export const { incrementRed, resetState, startLoop, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
+export const { incrementRed, resetState, startLoop, clearCombatLogMessages, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
 
-// The function below is called a selector and allows us to select a red from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.counter.red)`
+
 export const selectRed = (state: RootState) => state.gameState.resources.red;
 export const selectBlue = (state: RootState) => state.gameState.resources.blue;
 export const selectGreen = (state: RootState) => state.gameState.resources.green;
 export const selectHP = (state: RootState) => state.gameState.resources.hp;
+export const selectCombatLogMessages = (state: RootState) => state.gameState.combatLogMessages;
 export const selectGreenFnP1 = (state: RootState) => state.gameState.greenFnParams.linearP1;
 export const selectNextDoors = (state: RootState) => state.gameState.room.options || [];
 

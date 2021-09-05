@@ -8,8 +8,10 @@ import {
     selectSpells,
     castSpell,
     resetSpell,
-    Spell
+    clearCombatLogMessages,
+    selectCombatLogMessages
 } from './gameStateSlice';
+import { Spell } from './Types'
 import { getCostString } from './Utils'
 
 
@@ -19,15 +21,17 @@ import styles from './Counter.module.css';
 
 export const CYOA: FunctionComponent = () => {
     let options = useAppSelector(selectNextDoors)
+    let messages = useAppSelector(selectCombatLogMessages)
     let spells = useAppSelector(selectSpells)
     const dispatch = useAppDispatch();
     const hp = useAppSelector(selectHP);
 
     function spellFn(spell: Spell) {
-        console.log('lo')
         if (spell.available) {
             dispatch(castSpell(spell))
-            setTimeout(() => dispatch(resetSpell()), spell.cooldown || 1000)
+            setTimeout(() => dispatch(resetSpell(spell)), spell.cooldown || 1000)
+            setTimeout(() => dispatch(clearCombatLogMessages()), 7000)
+
         }
 
     }
@@ -41,7 +45,7 @@ export const CYOA: FunctionComponent = () => {
             { true && (
                 <div className={styles.row}>
                     <span style={{'color':'lightgrey', 'fontFamily':'monospace'}}>
-                        {'this is where the message goes'}
+                        {messages.join('. ')}
                     </span>
                 </div>
             )
@@ -77,7 +81,7 @@ export const CYOA: FunctionComponent = () => {
                     onClick={() => spellFn(spell)}
 
                 >
-                    {spell.description}
+                    {spell.available ? 'Y - ' : 'N - '} {spell.description}
                 </button>
            
             )

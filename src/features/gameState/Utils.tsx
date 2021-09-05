@@ -2,7 +2,7 @@ import React, { useState, FunctionComponent } from 'react';
 
 import {
     Cost
-} from './gameStateSlice';
+} from './Types';
 
 //export function getCostString(cost: Cost) {
 export const getCostString: FunctionComponent<Cost> = (cost: Cost) => {
