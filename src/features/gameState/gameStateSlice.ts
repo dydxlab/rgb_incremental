@@ -1,47 +1,40 @@
 import { types } from '@babel/core';
-import { createAsyncThunk, createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction, current, Draft } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import {Spell, 
-  Cost, 
-  GreenFnParams, 
-  BlueFnParams, 
-  RedFnParams,  
-redFn, 
-blueFn, 
-greenFn, 
-hpFn, 
-ResourceBonus, 
-Room, 
-QuestStep, 
-CYOAOption, 
-StructureStatus, 
-GSResourceName, 
-HPFnParams, 
-GameStatus, 
-combineRedParams, 
-combineBlueParams, 
-combineGreenParams, 
-addResources, 
-removeResources, 
-isCostSatisfiable,
+import {
+  Spell,
+  Cost,
+  GreenFnParams,
+  BlueFnParams,
+  RedFnParams,
+  redFn,
+  blueFn,
+  greenFn,
+  hpFn,
+  Room,
+  GSResourceName,
+  HPFnParams,
+  GameStatus,
+  combineRedParams,
+  combineBlueParams,
+  combineGreenParams,
+  addResources,
+  removeResources,
+  isCostSatisfiable,
+  spells1,
+  RoomList
 } from './Types'
-import {initializeTier1, Item, } from './Items'
-import {jungleRoom, quest2, roomInteractions, doorInteractions} from './Quest'
+import { initializeTier1, Item, } from './Items'
+import { caveRoom, getRoomInteractions, getDoorInteractions } from './Quest'
 
 
 
-let GreenUpgrade: [Cost, boolean, GreenFnParams]
-let BlueUpgrade: [Cost, boolean, BlueFnParams]
-let RedUpgrade: [Cost, boolean, RedFnParams]
+let GreenUpgrade: [Cost, boolean, GreenFnParams, Spell[]]
+let BlueUpgrade: [Cost, boolean, BlueFnParams, Spell[]]
+let RedUpgrade: [Cost, boolean, RedFnParams, Spell[]]
 
 
-let spells1: Array<Spell> = [
-  {description: 'Fireball', cooldown: 5000, available: true, },
-  {description: 'Commune with Plants', cooldown: 1000, available: true},
-  {description: 'Heal', },
-  {description: 'Frost Ray', available: true, },
-  {description: 'Spectral Rope', available: true, }
-]
+
 
 
 
@@ -55,7 +48,6 @@ export interface GameState {
   gameLoopInterval: number;
   availableSpells: Array<Spell>;
   room: Room;
-  questSteps: Array<QuestStep>;
   items: Array<typeof Item>;
   redFnParams: RedFnParams;
   greenFnParams: GreenFnParams;
@@ -74,15 +66,14 @@ export interface GameState {
 
 const initialState: GameState = {
   resources: {
-    red: 0,
-    green: 20, // 20
+    red: 0, // 0
+    green: 0, // 20
     blue: 3, //3
     hp: 100
   },
-  room: jungleRoom,
+  room: caveRoom,
   gameLoopInterval: 0,
-  questSteps: quest2,
-  availableSpells: spells1,
+  availableSpells: [],
   items: initializeTier1(),
   redFnParams: { linearP1: 1 },
   greenFnParams: { linearP1: 2, quadraticP1: 0, twoPowerP1: 0 },
@@ -95,31 +86,31 @@ const initialState: GameState = {
   status: "ready",
   combatLogMessages: [],
   greenUpgrades: [
-    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }],
-    [{ green: 29, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }],
-    [{ green: 105, red: 0, blue: 0, hp: 0 }, false, { linearP1: 4, quadraticP1: 0, twoPowerP1: 0 }],
-    [{ green: 82, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 0 }],
-    [{ green: 379, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0, quadraticP1: 3, twoPowerP1: 0 }],
-    [{ green: 1800, red: 0, blue: 7, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }],
-    [{ green: 500000, red: 100, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 2 }],
-    [{ green: 1000000000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }],
+    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }, []],
+    [{ green: 29, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }, [spells1.CommuneWithPlants]],
+    [{ green: 105, red: 0, blue: 0, hp: 0 }, false, { linearP1: 4, quadraticP1: 0, twoPowerP1: 0 }, []],
+    [{ green: 82, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 0 }, [spells1.SpectralRope]],
+    [{ green: 379, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0, quadraticP1: 3, twoPowerP1: 0 }, []],
+    [{ green: 1800, red: 0, blue: 7, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }, []],
+    [{ green: 500000, red: 100, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 2 }, [spells1.Heal]],
+    [{ green: 1000000000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }, []],
 
   ],
   redUpgrades: [
-    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }],
-    [{ green: 37, red: 0, blue: 1, hp: 0 }, false, { linearP1: 0.3 }],
-    [{ green: 105, red: 0, blue: 3, hp: 0 }, false, { linearP1: 4 }],
-    [{ green: 10, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }],
-    [{ green: 7000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 8 }],
-    [{ green: 61589, red: 0, blue: 55, hp: 0 }, false, { linearP1: 22 }],
+    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }, [spells1.Fireball]],
+    [{ green: 37, red: 0, blue: 1, hp: 0 }, false, { linearP1: 0.3 }, []],
+    [{ green: 105, red: 0, blue: 3, hp: 0 }, false, { linearP1: 4 }, []],
+    [{ green: 10, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }, []],
+    [{ green: 7000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 8 }, []],
+    [{ green: 61589, red: 0, blue: 55, hp: 0 }, false, { linearP1: 22 }, []],
 
   ],
   blueUpgrades: [
-    [{ green: 9, red: 45, blue: 0, hp: 0 }, false, { normalP1: 0.0002, normalP2: 0.0001 }],
-    [{ green: 499, red: 0, blue: 2, hp: 0 }, false, { normalP1: 0, normalP2: 0.5 }],
-    [{ green: 0, red: 389, blue: 21, hp: 0 }, false, { normalP1: 2, normalP2: 0 }],
-    [{ green: 0, red: 0, blue: 131, hp: 0 }, false, { normalP1: 0, normalP2: 10 }],
-    [{ green: 0, red: 0, blue: 305, hp: 0 }, false, { normalP1: 0, normalP2: 10 }],
+    [{ green: 9, red: 45, blue: 0, hp: 0 }, false, { normalP1: 0.0002, normalP2: 0.0001 }, []],
+    [{ green: 499, red: 0, blue: 2, hp: 0 }, false, { normalP1: 0, normalP2: 0.5 }, [spells1.FrostRay]],
+    [{ green: 0, red: 389, blue: 21, hp: 0 }, false, { normalP1: 2, normalP2: 0 }, []],
+    [{ green: 0, red: 0, blue: 131, hp: 0 }, false, { normalP1: 0, normalP2: 10 }, []],
+    [{ green: 0, red: 0, blue: 305, hp: 0 }, false, { normalP1: 0, normalP2: 10 }, []],
   ]
 
 
@@ -137,7 +128,8 @@ export const gameStateSlice = createSlice({
       state.status = 'started';
     },
     resetState: (state) => {
-      return initialStateCopy;
+      clearInterval(state.gameLoopInterval);
+      Object.assign(state, initialStateCopy);
     },
     incrementRed: (state) => {
       state.resources.red += redFn(state.redFnParams);
@@ -145,18 +137,18 @@ export const gameStateSlice = createSlice({
       state.redDist.shift();
     },
     castSpell: (state, payload) => {
-      if(payload){
+      if (payload) {
         let spell = state.availableSpells.find(x => x.description === payload.payload.description)
-        if(spell) {
+        if (spell) {
           spell.available = false
           handleSpell(state, spell)
         }
       }
     },
     resetSpell: (state, payload) => {
-      if(payload){
+      if (payload) {
         let spell = state.availableSpells.find(x => x.description === payload.payload.description)
-        if(spell) {
+        if (spell) {
           spell.available = true
         }
       }
@@ -174,17 +166,26 @@ export const gameStateSlice = createSlice({
     },
     incrementHP: (state) => {
       state.resources.hp -= hpFn(state.hpFnParams);
-      if(state.resources.hp <= 0) {
+      if (state.resources.hp <= 0) {
         state.status = "gameOver"
         console.log(state.status)
       }
     },
+    boulderKill: (state) => {
+      if(state.room.name === RoomList.Boulder){
+        state.status = "gameOver"
+      }
+    },
+
     setGameLoopIntervals: (state, action) => {
       state.gameLoopInterval = action.payload
     },
     clearGameLoopIntervals: (state) => {
       clearInterval(state.gameLoopInterval);
       state.gameLoopInterval = 0;
+    },
+    addCombatLogMessages: (state, action) => {
+      state.combatLogMessages.push(action.payload)
     },
     clearCombatLogMessages: (state) => {
       state.combatLogMessages = []
@@ -205,26 +206,26 @@ export const gameStateSlice = createSlice({
       }
     },
     stepQuest: (state, action) => {
-      
-      let step = state.questSteps.find(x => x.active)
+      let step = state.room.options
       let currentStep = current(step)
       if (!step || !currentStep) {
         return
       }
 
-      let currentChoice = currentStep.options.find(x => x == action.payload.choice )
-      if(!currentChoice) {
+      let currentChoice = currentStep.find(x => x === action.payload.choice)
+      if (!currentChoice) {
         return
       }
       if (!isCostSatisfiable(currentChoice.cost, state.resources)) {
         return
       }
       state.resources = removeResources(currentChoice.cost, state.resources)
-
-      step.active = false
-      if(!state.questSteps.find(x => x.active)) {
+      if (currentChoice.destination.options.length == 0 ) {
         state.status = 'victory'
       }
+
+      state.room = currentChoice.destination
+      
 
     },
     upgrade: (state, action) => {
@@ -237,6 +238,7 @@ export const gameStateSlice = createSlice({
         if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
           return
         }
+        state.availableSpells = state.availableSpells.concat(currentUpgrade[3])
         state.resources = removeResources(currentUpgrade[0], state.resources)
         state.greenFnParams = combineGreenParams(state.greenFnParams, currentUpgrade[2])
         upgrade[1] = true;
@@ -250,6 +252,7 @@ export const gameStateSlice = createSlice({
         if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
           return
         }
+        state.availableSpells = state.availableSpells.concat(currentUpgrade[3])
         state.resources = removeResources(currentUpgrade[0], state.resources)
         state.redFnParams = combineRedParams(state.redFnParams, currentUpgrade[2])
         upgrade[1] = true;
@@ -260,9 +263,7 @@ export const gameStateSlice = createSlice({
         if (!upgrade || !currentUpgrade || action.payload.blue !== currentUpgrade) {
           return
         }
-        if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
-          return
-        }
+        state.availableSpells = state.availableSpells.concat(currentUpgrade[3])
         state.resources = removeResources(currentUpgrade[0], state.resources)
         state.blueFnParams = combineBlueParams(state.blueFnParams, currentUpgrade[2])
         upgrade[1] = true;
@@ -273,17 +274,14 @@ export const gameStateSlice = createSlice({
 
 });
 
-function handleSpell(state, spell) {
-  console.log('handling')
-
-  let interaction = roomInteractions[state.room.name]
+function handleSpell(state: Draft<GameState>, spell: Spell) {
+  let interaction = getRoomInteractions(state.room.name)
   let result = interaction(state, spell)
 
-  let doorResults = state.room.options.map(x => doorInteractions[x.title](state, spell))
-  console.log(current(state.combatLogMessages))
+  let doorResults = state.room.options.map(x => getDoorInteractions(x.destination.name)(state, spell))
 }
 
-export const { incrementRed, resetState, startLoop, clearCombatLogMessages, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
+export const { incrementRed, resetState, startLoop, boulderKill, addCombatLogMessages, clearCombatLogMessages, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
 
 
 export const selectRed = (state: RootState) => state.gameState.resources.red;
@@ -292,6 +290,8 @@ export const selectGreen = (state: RootState) => state.gameState.resources.green
 export const selectHP = (state: RootState) => state.gameState.resources.hp;
 export const selectCombatLogMessages = (state: RootState) => state.gameState.combatLogMessages;
 export const selectGreenFnP1 = (state: RootState) => state.gameState.greenFnParams.linearP1;
+export const selectRoomName = (state: RootState) => state.gameState.room.name;
+
 export const selectNextDoors = (state: RootState) => state.gameState.room.options || [];
 
 export const selectSpells = (state: RootState) => state.gameState.availableSpells;

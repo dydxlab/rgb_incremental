@@ -2,7 +2,6 @@ import React, { useState, FunctionComponent } from 'react';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
-
   incrementRed,
   incrementGreen,
   incrementBlue,
@@ -25,15 +24,18 @@ import styles from './Counter.module.css';
 import Plot from 'react-plotly.js';
 const pd = require('probability-distributions');
 
-
-function getCards() {
-  const cards = ['card1', 'card2', 'card3'];
-  const players = ['player1', 'player2'];
-
-  return (<React.Fragment>
-    {cards.map(c => <div>text</div>)}
-  </React.Fragment>
-  )
+function formatResourceValue(x: number): String {
+  if(x <= 10000){
+    return x.toFixed(1)
+  } else if(x > 10000 && x <= 1000000){
+    return (x / 1000).toFixed(0) + 'K'
+  } else if(x > 1000000 && x <= 1000000000){
+    return (x / (1000 * 1000)).toFixed(0) + 'M'
+  } else if(x > 1000000000 && x <= 1000000000000){
+    return (x / (1000 * 1000 * 1000)).toFixed(0) + 'B'
+  } else {
+    return x + ''
+  }
 }
 
 let xA: Array<number> = [];
@@ -134,10 +136,10 @@ export const Draft: FunctionComponent = () => {
     <div>
       <div className={styles.row}>
 
-        <span className={styles.value} style={{ 'color': 'red' }}>{red.toFixed(1)}</span>
+        <span className={styles.value} style={{ 'color': 'red' }}>{formatResourceValue(red)}</span>
 
-        <span className={styles.value} style={{ 'color': 'limegreen' }}>{green.toFixed(1)}</span>
-        <span className={styles.value} style={{ 'color': 'steelblue' }}>{blue.toFixed(1)}</span>
+        <span className={styles.value} style={{ 'color': 'limegreen' }}>{formatResourceValue(green)}</span>
+        <span className={styles.value} style={{ 'color': 'steelblue' }}>{formatResourceValue(blue)}</span>
 
 
 

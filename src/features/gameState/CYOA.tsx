@@ -9,11 +9,14 @@ import {
     castSpell,
     resetSpell,
     clearCombatLogMessages,
-    selectCombatLogMessages
+    selectCombatLogMessages,
+    selectRoomName,
+    resetState, 
+    boulderKill,
+    addCombatLogMessages,
 } from './gameStateSlice';
-import { Spell } from './Types'
+import { Spell, RoomList } from './Types'
 import { getCostString } from './Utils'
-
 
 import styles from './Counter.module.css';
 
@@ -21,6 +24,7 @@ import styles from './Counter.module.css';
 
 export const CYOA: FunctionComponent = () => {
     let options = useAppSelector(selectNextDoors)
+    let roomName = useAppSelector(selectRoomName)
     let messages = useAppSelector(selectCombatLogMessages)
     let spells = useAppSelector(selectSpells)
     const dispatch = useAppDispatch();
@@ -36,15 +40,33 @@ export const CYOA: FunctionComponent = () => {
 
     }
 
+    function goStepQuest(choice){
+        dispatch(stepQuest(choice))
+        if(choice.choice.title === RoomList.Boulder){
+            dispatch(addCombatLogMessages('An enormous boulder cascades toward you.'))
+
+            setTimeout(() => dispatch(boulderKill()), 10000)
+        }
+    }
+
 
     return (
         <div>
+ 
             <h2 style={{ 'color': 'rgb(255, 255, 255)' }}>Quest - <span style={{ 'color': 'red' }}>{Math.round(hp * 10) / 10}
                 <img src="./hp-heart.svg" alt="heart" className={hp > 30 ? styles.hpheart : styles.hpheartFaster} />
             </span> </h2>
+            <div className={styles.row}>
+            <span style={{ 'color': 'lightgrey', 'fontSize':'12px' }}>Current Room: {roomName}</span>
+            <button
+                className={styles.button}
+                onClick={() => dispatch(resetState())}
+
+            >Reset</button>
+            </div>
             { true && (
                 <div className={styles.row}>
-                    <span style={{'color':'lightgrey', 'fontFamily':'monospace'}}>
+                    <span style={{ 'color': 'lightgrey', 'fontFamily': 'monospace' }}>
                         {messages.join('. ')}
                     </span>
                 </div>
@@ -59,7 +81,7 @@ export const CYOA: FunctionComponent = () => {
                         <h3 style={{ 'color': 'rgb(255, 255, 255)' }}>{option.title} </h3>
                         <button
                             className={styles.button}
-                            onClick={() => dispatch(stepQuest({ "choice": option }))}
+                            onClick={() => goStepQuest({ "choice": option })}
 
                         >
                             {option.action} - {getCostString(option.cost)}
@@ -72,21 +94,21 @@ export const CYOA: FunctionComponent = () => {
 
             </div>
             <div className={styles.row}>
-            {spells && 
-            
-            spells.map(spell => (
-            
-                <button
-                    className={styles.button}
-                    onClick={() => spellFn(spell)}
+                {spells &&
 
-                >
-                    {spell.available ? 'Y - ' : 'N - '} {spell.description}
-                </button>
-           
-            )
-            )
-            }
+                    spells.map(spell => (
+
+                        <button
+                            className={styles.button}
+                            onClick={() => spellFn(spell)}
+
+                        >
+                            {spell.available ? <img src="./active_spell.svg" alt="active" className={styles.spellstatus} /> : <img src="./inactive_spell.svg" alt="inactive" className={styles.spellstatus} />} {spell.description}
+                        </button>
+
+                    )
+                    )
+                }
             </div>
         </div>
     )

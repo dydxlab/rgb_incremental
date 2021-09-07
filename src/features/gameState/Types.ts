@@ -7,6 +7,7 @@ export interface CYOAOption {
     action?: String;
     image?: String;
     cost: Cost;
+    destination: Room;
     statuses: Array<StructureStatus>;
 }
 
@@ -37,9 +38,9 @@ export interface HPFnParams  {
 
 
 export interface Spell {
-    description?: String;
+    description: SpellList;
     cooldown?: number;
-    available?: boolean;
+    available: boolean;
 }
 
 
@@ -47,13 +48,50 @@ export type GSResourceName = "red" | "blue" | "green" | "hp";
 export type GameStatus = "ready" | "started" | "victory" | "gameOver";
 export type StructureStatus = "burnt" | "frozen" | "flourishing";
 
+
+export enum RoomList {
+    Desert = "Desert",
+    Volcano = "Volcano",
+    TempleRuins = "Temple Ruins",
+    TempleGuardian = "Temple Guardian",
+    Unknown = "Unknown",
+    Jungle = "Jungle",
+    Cave = "Cave",
+    Moon = "Moon",
+    Sandstorm = "Sandstorm",
+    Rabbit = "Rabbit",
+    Oasis = "Oasis",
+    Treasure = "Treasure",
+    Boulder = "Boulder",
+    TreeTops = "Tree Tops",
+    Monsters = "Monsters",
+    FungalColony = "Fungal Colony"
+}
+
+
+export enum SpellList {
+    Fireball = "Fireball",
+    FrostRay = "Frost Ray",
+    Heal = "Heal",
+    CommuneWithPlants = "Commune with Plants",
+    SpectralRope = "Spectral Rope"
+}
+
 export type Cost = Record<GSResourceName, number>
 export type ResourceBonus = Record<GSResourceName, number>
+
+export const spells1 = {
+  Fireball: { description: SpellList.Fireball, cooldown: 20000, available: true, },
+  CommuneWithPlants: { description: SpellList.CommuneWithPlants, cooldown: 3000, available: true },
+  Heal:   { description: SpellList.Heal, cooldown: 5000, available: true},
+  FrostRay:   { description: SpellList.FrostRay, cooldown: 5000,  available: true, },
+  SpectralRope:  { description: SpellList.SpectralRope, cooldown: 5000, available: true, }
+}
 
 export interface Room {
     statuses: Array<StructureStatus>;
     options: Array<CYOAOption>;
-    name: String;
+    name: RoomList;
   }
 
 export function isCostSatisfiable(cost: Cost, resources: Record<GSResourceName, number>): boolean {
