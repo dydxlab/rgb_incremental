@@ -22,7 +22,8 @@ import {
   removeResources,
   isCostSatisfiable,
   spells1,
-  RoomList
+  RoomList, 
+  SpellList
 } from './Types'
 import { initializeTier1, Item, } from './Items'
 import { caveRoom, getRoomInteractions, getDoorInteractions } from './Quest'
@@ -34,17 +35,32 @@ let BlueUpgrade: [Cost, boolean, BlueFnParams, Spell[]]
 let RedUpgrade: [Cost, boolean, RedFnParams, Spell[]]
 
 
+export type SlimeBossStatus = "burnable" | "burnt" | "freezable" | "frozen" | "normal" | "attacking" | "inactive";
+const SlimeBossStatuses: Array<SlimeBossStatus> = ["burnable" , "freezable" ,  "normal" ,  "normal" , "attacking" , "inactive", "inactive"]
+export const SlimeBossStatusColors = {
+  "burnable": "#ff0000",
+  "burnt": "#860f11",
+  "freezable": "#00e4ff", 
+  "frozen": "#00a6b9",
+  "normal": "#d2d2d2",
+  "attacking": "#000000",
+  "inactive": "#f3b179",
+}
 
 
 
 
-
-
+export interface SlimeBoss {
+  bossHp: number;
+  status: SlimeBossStatus;
+}
 
 
 
 export interface GameState {
   resources: Record<GSResourceName, number>;
+  boss: SlimeBoss;
+
   gameLoopInterval: number;
   availableSpells: Array<Spell>;
   room: Room;
@@ -66,14 +82,18 @@ export interface GameState {
 
 const initialState: GameState = {
   resources: {
-    red: 0, // 0
-    green: 0, // 20
-    blue: 3, //3
+    red: 1000000, // 0
+    green: 10000000, // 20
+    blue: 30000000, //3
     hp: 100
+  },
+  boss: {
+    bossHp: 100,
+    status: 'normal'
   },
   room: caveRoom,
   gameLoopInterval: 0,
-  availableSpells: [],
+  availableSpells: Object.values(spells1),
   items: initializeTier1(),
   redFnParams: { linearP1: 1 },
   greenFnParams: { linearP1: 2, quadraticP1: 0, twoPowerP1: 0 },
@@ -110,7 +130,7 @@ const initialState: GameState = {
     [{ green: 499, red: 0, blue: 2, hp: 0 }, false, { normalP1: 0, normalP2: 0.5 }, [spells1.FrostRay]],
     [{ green: 0, red: 389, blue: 21, hp: 0 }, false, { normalP1: 2, normalP2: 0 }, []],
     [{ green: 0, red: 0, blue: 131, hp: 0 }, false, { normalP1: 0, normalP2: 10 }, []],
-    [{ green: 0, red: 0, blue: 305, hp: 0 }, false, { normalP1: 0, normalP2: 10 }, []],
+    [{ green: 0, red: 0, blue: 305, hp: 0 }, false, { normalP1: 1, normalP2: 10 }, []],
   ]
 
 
@@ -168,8 +188,53 @@ export const gameStateSlice = createSlice({
       state.resources.hp -= hpFn(state.hpFnParams);
       if (state.resources.hp <= 0) {
         state.status = "gameOver"
+      }
+    },
+
+    attackBoss: (state, action) => {
+      if(action.payload.description === SpellList.Fireball && state.boss.status === 'burnable'){
+        state.boss.status = 'burnt'
+        state.boss.bossHp -= 30
+      } else if(action.payload.description === SpellList.Fireball && state.boss.status === 'normal'){
+        state.boss.bossHp -= 20
+      } else if(action.payload.description === SpellList.FrostRay && state.boss.status === 'freezable'){
+        state.boss.status = 'frozen'
+        state.boss.bossHp -= 30
+      } else if(action.payload.description === SpellList.FrostRay && state.boss.status === 'normal'){
+        state.boss.bossHp -= 20
+      } else if(action.payload.description === 'Gem Attack' && state.boss.status === 'normal'){
+        state.boss.status = 'inactive'
+        state.boss.bossHp -= 10
+      } else if(action.payload.description === 'Gem Attack' && state.availableSpells.find(x => x.description === SpellList.SpectralRope && !x.available) && state.boss.status === 'normal'){
+        state.boss.status = 'inactive'
+        state.boss.bossHp -= 15
+      }
+      if (state.boss.bossHp <=0){
+        state.status = 'victory'
+      }
+    },
+    startBossFight: (state) => {
+      state.status = 'bossFight'
+    },
+    bossAttack: (state) => {
+      if(state.availableSpells.find(x => x.description === SpellList.SpectralRope && !x.available) || state.boss.status === 'frozen' || state.boss.status === 'burnt'){
+        state.resources.hp -= 3
+      } else {
+        state.resources.hp -= 5
+      }
+      state.boss.status = SlimeBossStatuses[Math.round(Math.random() * SlimeBossStatuses.length)]
+      if(state.resources.hp <= 0) {
+        state.status = 'gameOver'
+      }
+
+    },
+    incrementBossHP: (state) => {
+      state.boss.bossHp -= (4 * Math.random())
+      if (state.boss.bossHp <= 0) {
+        state.status = "victory"
         console.log(state.status)
       }
+      console.log(state.status)
     },
     boulderKill: (state) => {
       if(state.room.name === RoomList.Boulder){
@@ -281,13 +346,15 @@ function handleSpell(state: Draft<GameState>, spell: Spell) {
   let doorResults = state.room.options.map(x => getDoorInteractions(x.destination.name)(state, spell))
 }
 
-export const { incrementRed, resetState, startLoop, boulderKill, addCombatLogMessages, clearCombatLogMessages, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
+export const { incrementRed, incrementBossHP, resetState, startBossFight, startLoop, boulderKill, attackBoss, bossAttack, addCombatLogMessages, clearCombatLogMessages, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
 
 
 export const selectRed = (state: RootState) => state.gameState.resources.red;
 export const selectBlue = (state: RootState) => state.gameState.resources.blue;
 export const selectGreen = (state: RootState) => state.gameState.resources.green;
 export const selectHP = (state: RootState) => state.gameState.resources.hp;
+export const selectBossHP = (state: RootState) => state.gameState.boss.bossHp;
+export const selectBossStatus = (state: RootState) => state.gameState.boss.status;
 export const selectCombatLogMessages = (state: RootState) => state.gameState.combatLogMessages;
 export const selectGreenFnP1 = (state: RootState) => state.gameState.greenFnParams.linearP1;
 export const selectRoomName = (state: RootState) => state.gameState.room.name;

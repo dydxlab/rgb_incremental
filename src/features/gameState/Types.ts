@@ -45,7 +45,7 @@ export interface Spell {
 
 
 export type GSResourceName = "red" | "blue" | "green" | "hp";
-export type GameStatus = "ready" | "started" | "victory" | "gameOver";
+export type GameStatus = "ready" | "started" | "victory" | "bossFight" | "gameOver";
 export type StructureStatus = "burnt" | "frozen" | "flourishing";
 
 

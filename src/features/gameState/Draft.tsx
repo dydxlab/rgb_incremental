@@ -19,24 +19,11 @@ import {
   selectRedDist,
   selectGameStatus
 } from './gameStateSlice';
+import { formatResourceValue } from './Utils';
 import styles from './Counter.module.css';
 
 import Plot from 'react-plotly.js';
 const pd = require('probability-distributions');
-
-function formatResourceValue(x: number): String {
-  if(x <= 10000){
-    return x.toFixed(1)
-  } else if(x > 10000 && x <= 1000000){
-    return (x / 1000).toFixed(0) + 'K'
-  } else if(x > 1000000 && x <= 1000000000){
-    return (x / (1000 * 1000)).toFixed(0) + 'M'
-  } else if(x > 1000000000 && x <= 1000000000000){
-    return (x / (1000 * 1000 * 1000)).toFixed(0) + 'B'
-  } else {
-    return x + ''
-  }
-}
 
 let xA: Array<number> = [];
 let yA: Array<number> = [];

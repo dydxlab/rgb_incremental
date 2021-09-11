@@ -52,8 +52,13 @@ export const TechTree: FunctionComponent = () => {
                     </button>
                 }
             </div>
+        </div>
 
-            <div className={styles.row}>
+    );
+}
+
+/*
+ <div className={styles.row}>
                 {itemCost &&
                     <button
                         className={styles.button}
@@ -63,10 +68,4 @@ export const TechTree: FunctionComponent = () => {
                     </button>
                 }
             </div>
-
-
-
-        </div>
-
-    );
-}
+ */

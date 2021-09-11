@@ -143,6 +143,7 @@ h2 {
   }
 }
 
+
 @keyframes hpheartthrobFaster {
   0% {
     transform: scale(0.85);
@@ -159,4 +160,105 @@ h2 {
   100% {
     transform: scale(0.85);
   }
+}
+
+.bossImage {
+  height: 256px; 
+  width: 256px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bossImage {
+    animation: bossImagePulse infinite 4.0s ease-in-out;
+  }
+}
+
+@keyframes bossImagePulse {
+  0% {
+    transform: scale(1.0);
+  }
+  66% {
+    transform: translate3d(-10px, 0, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.0);
+  }
+}
+
+.animate__bounce {
+  -webkit-transform-origin: center bottom;
+  transform-origin: center bottom;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate__bounce {
+    animation-name: bounce, bossImagePulse;
+    animation-duration: 4.0s, 4.0s;
+    animation-timing-function: ease-in-out, ease-in-out;
+    animation-delay: 0ms, 4000ms;
+    animation-iteration-count: 1, infinite;
+
+
+  }
+}
+
+@keyframes bounce {
+  from,
+  20%,
+  53%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%,
+  43% {
+    -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    -webkit-transform: translate3d(0, -30px, 0) scaleY(1.1);
+    transform: translate3d(0, -30px, 0) scaleY(1.1);
+  }
+
+  70% {
+    -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    -webkit-transform: translate3d(0, -15px, 0) scaleY(1.05);
+    transform: translate3d(0, -15px, 0) scaleY(1.05);
+  }
+
+  80% {
+    -webkit-transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    -webkit-transform: translate3d(0, 0, 0) scale(1.0);
+    transform: translate3d(0, 0, 0) scale(1.0);
+  }
+
+}
+
+
+
+.slimerun {
+  height:512px;
+  width:512px;
+  background: url('http://localhost:3000/Slime_Spiked_Run.png') ;
+  background-size: 2048px 512px;
+  animation: play 0.8s steps(4) infinite;
+  margin-top: -140px;
+  margin-bottom: -100px;
+  margin-left: -20px;
+  margin-right: -100px;
+}
+@keyframes play {
+  100% {
+    background-position: -2048px;
+  }
+}
+
+.slimerunColor{
+  background: rgba(39,62,84,0.82);
+  overflow: hidden;
+  height: 100%;
+  z-index: 2;
 }

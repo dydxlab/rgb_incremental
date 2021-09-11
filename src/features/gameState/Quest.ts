@@ -174,6 +174,14 @@ function EmptyFn(state, spell) {
     
 }
 
+export let FakeRoom: Room = {
+    name: RoomList.Cave,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        
+    ]
+}
+
 export let treasureRoom: Room = {
     name: RoomList.Treasure,
     statuses: new Array<StructureStatus>(),
@@ -182,11 +190,24 @@ export let treasureRoom: Room = {
     ]
 }
 
+
+
+export let templeGuardianRoom: Room = {
+    name: RoomList.TempleGuardian,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        
+        { title: RoomList.Cave, action: "Challenge the Temple Guardn", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: FakeRoom, statuses: new Array<StructureStatus>() },
+
+    ]
+}
+
 export let oasisRoom: Room = {
     name: RoomList.Oasis,
     statuses: new Array<StructureStatus>(),
     options: [
-        
+        { title: RoomList.TempleGuardian, action: "Challenge the Temple Guardn", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: templeGuardianRoom, statuses: new Array<StructureStatus>() },
+
     ]
 }
 
@@ -213,7 +234,7 @@ export let boulderRoom: Room = {
     statuses: new Array<StructureStatus>(),
     options: [
         { title: RoomList.Oasis, action: "Dive left into the web-covered pit", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: oasisRoom, statuses: new Array<StructureStatus>() },
-        { title: RoomList.Volcano, action: "Leap right into the musty cove", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: volcanoRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Volcano, action: "Crawl over the wall", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: volcanoRoom, statuses: new Array<StructureStatus>() },
     ]
 }
 
@@ -246,14 +267,6 @@ export let treeTopsRoom: Room = {
     ]
 }
 
-export let templeGuardianRoom: Room = {
-    name: RoomList.TempleGuardian,
-    statuses: new Array<StructureStatus>(),
-    options: [
-        
-
-    ]
-}
 
 export let templeRuinsRoom: Room = {
     name: RoomList.TempleRuins,
@@ -269,7 +282,6 @@ export let jungleRoom: Room = {
     options: [
         { title: RoomList.TreeTops, action: "Shimmy into the Tree Tops", cost: { green: 2134, red: 0, blue: 0, hp: 0 }, destination: treeTopsRoom, statuses: new Array<StructureStatus>() },
         { title: RoomList.TempleRuins, action: "Venture towards the Temple Ruins", cost: { green: 4444, red: 0, blue: 0, hp: 0 }, destination: templeRuinsRoom, statuses: new Array<StructureStatus>() },
-
     ]
 }
 
@@ -286,7 +298,7 @@ export let desertRoom: Room = {
     name: RoomList.Desert,
     statuses: new Array<StructureStatus>(),
     options: [
-        { title: RoomList.Volcano, action: "Leap right into the musty cove", cost: { green: 0, red: 100000, blue: 0, hp: 0 }, destination: volcanoRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Volcano, action: "Ascend the cliff face", cost: { green: 0, red: 10000, blue: 0, hp: 0 }, destination: volcanoRoom, statuses: new Array<StructureStatus>() },
 
     ]
 }
@@ -308,7 +320,7 @@ export let fungalColonyRoom: Room = {
     ]
 }
 
-let moonDoor = { title: RoomList.FungalColony, action: "Venture behind the veil", cost: { green: 100, red: 100, blue: 10, hp: 0 }, destination: desertRoom, statuses: new Array<StructureStatus>() }
+let moonDoor = { title: RoomList.FungalColony, action: "Venture behind the veil", cost: { green: 100, red: 100, blue: 10, hp: 0 }, destination: fungalColonyRoom, statuses: new Array<StructureStatus>() }
 let rabbitDoor = { title: RoomList.Rabbit, action: "Hurdle over the frozen brambles", cost: { green: 100, red: 100, blue: 10, hp: 0 }, destination: rabbitRoom, statuses: new Array<StructureStatus>() }
 
 

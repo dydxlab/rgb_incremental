@@ -2,7 +2,8 @@ import React, { useState, FunctionComponent } from 'react';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 
-import {GameWrapper} from './GameWrapper'
+import { GameWrapper } from './GameWrapper'
+import { BossFight } from './BossFight'
 import {
     clearGameLoopIntervals,
     setGameLoopIntervals,
@@ -21,7 +22,7 @@ import {
     selectGreenDist,
     selectRedDist,
     selectGameStatus
-  } from './gameStateSlice';
+} from './gameStateSlice';
 
 import styles from './Counter.module.css';
 
@@ -40,45 +41,46 @@ export const GameOver: FunctionComponent = () => {
     function initializeLoop() {
         // start timer after button is clicked
         if (gameStatus == 'ready' || gameStatus == 'victory' || gameStatus == 'gameOver') {
-          dispatch(resetState())
-          
-          dispatch(startLoop());
-          dispatch(clearGameLoopIntervals());
-          let intval = setInterval(() => {
+            dispatch(resetState())
+
+            dispatch(startLoop());
+            dispatch(clearGameLoopIntervals());
+            let intval = setInterval(() => {
                 dispatch(incrementRed());
                 dispatch(incrementGreen());
                 dispatch(incrementBlue());
                 dispatch(incrementHP());
-              },
-              1000);
-          dispatch(setGameLoopIntervals(intval))
+            },
+                1000);
+            dispatch(setGameLoopIntervals(intval))
         }
     }
 
     return (
-        
+
         <div>
-            {(() => { switch(status) {
-                case 'victory': return <div><div className={styles.endScreen} style={{ 'color': 'gold' }} > <span>You Win!</span> </div>  <button
-                className={styles.button}
-                aria-label="start"
-                onClick={initializeLoop}
-              >
-                Start
-            </button></div>;
-                case 'gameOver': return <div><div className={styles.endScreen} style={{ 'color': 'red' }} > <span>GAME OVER</span> </div>
-                 <button
-            className={styles.button}
-            aria-label="start"
-            onClick={initializeLoop}
-          >
-            Start
-        </button>
-                </div>
-                default: return <GameWrapper></GameWrapper>
-            }
+            {(() => {
+                switch (status) {
+                    case 'victory': return <div><div className={styles.endScreen} style={{ 'color': 'gold' }} > <span>You Win!</span> </div>  <button
+                        className={styles.button}
+                        aria-label="start"
+                        onClick={initializeLoop}
+                    >
+                        Start
+                    </button></div>;
+                    case 'gameOver': return <div><div className={styles.endScreen} style={{ 'color': 'red' }} > <span>GAME OVER</span> </div>
+                        <button
+                            className={styles.button}
+                            aria-label="start"
+                            onClick={initializeLoop}
+                        >
+                            Start
+                        </button></div>
+                    case 'bossFight': return <BossFight />
+                    default: return <GameWrapper></GameWrapper>
+                }
             })()
-        }
+            }
         </div>
     )
 }

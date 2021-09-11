@@ -14,6 +14,7 @@ import {
     resetState, 
     boulderKill,
     addCombatLogMessages,
+    startBossFight
 } from './gameStateSlice';
 import { Spell, RoomList } from './Types'
 import { getCostString } from './Utils'
@@ -46,6 +47,8 @@ export const CYOA: FunctionComponent = () => {
             dispatch(addCombatLogMessages('An enormous boulder cascades toward you.'))
 
             setTimeout(() => dispatch(boulderKill()), 10000)
+        } else if(choice.choice.title === RoomList.TempleGuardian){
+            dispatch(startBossFight());
         }
     }
 
