@@ -233,8 +233,8 @@ export let boulderRoom: Room = {
     name: RoomList.Boulder,
     statuses: new Array<StructureStatus>(),
     options: [
-        { title: RoomList.Oasis, action: "Dive left into the web-covered pit", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: oasisRoom, statuses: new Array<StructureStatus>() },
-        { title: RoomList.Volcano, action: "Crawl over the wall", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: volcanoRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Oasis, action: "Dive left into the web-covered pit", cost: { green: 3200, red: 0, blue: 0, hp: 0 }, destination: oasisRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Volcano, action: "Crawl over the wall", cost: { green: 48000, red: 0, blue: 0, hp: 0 }, destination: volcanoRoom, statuses: new Array<StructureStatus>() },
     ]
 }
 
@@ -251,7 +251,7 @@ export let rabbitRoom: Room = {
     name: RoomList.Rabbit,
     statuses: new Array<StructureStatus>(),
     options: [
-        { title: RoomList.Monsters, action: "Slide down tunnel", cost: { green: 900, red: 8000, blue: 100, hp: 0 }, destination: monstersRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Monsters, action: "Slide down tunnel", cost: { green: 900, red: 1200, blue: 100, hp: 0 }, destination: monstersRoom, statuses: new Array<StructureStatus>() },
 
     ]
 }
@@ -262,7 +262,7 @@ export let treeTopsRoom: Room = {
     name: RoomList.TreeTops,
     statuses: new Array<StructureStatus>(),
     options: [
-        { title: RoomList.Monsters, action: "Leap into the musty cove", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: monstersRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Monsters, action: "Leap into the musty cove", cost: { green: 75330, red: 0, blue: 0, hp: 0 }, destination: monstersRoom, statuses: new Array<StructureStatus>() },
 
     ]
 }
@@ -272,7 +272,7 @@ export let templeRuinsRoom: Room = {
     name: RoomList.TempleRuins,
     statuses: new Array<StructureStatus>(),
     options: [
-        { title: RoomList.TempleGuardian, action: "Face the Temple Guardian", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: templeGuardianRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.TempleGuardian, action: "Face the Temple Guardian", cost: { green: 37500, red: 1200, blue: 50, hp: 0 }, destination: templeGuardianRoom, statuses: new Array<StructureStatus>() },
     ]
 }
 

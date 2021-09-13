@@ -82,9 +82,9 @@ export interface GameState {
 
 const initialState: GameState = {
   resources: {
-    red: 1000000, // 0
-    green: 10000000, // 20
-    blue: 30000000, //3
+    red: 0, // 0
+    green: 0, // 20
+    blue: 3, //3
     hp: 100
   },
   boss: {
@@ -93,7 +93,7 @@ const initialState: GameState = {
   },
   room: caveRoom,
   gameLoopInterval: 0,
-  availableSpells: Object.values(spells1),
+  availableSpells: [],//Object.values(spells1),
   items: initializeTier1(),
   redFnParams: { linearP1: 1 },
   greenFnParams: { linearP1: 2, quadraticP1: 0, twoPowerP1: 0 },
@@ -215,6 +215,8 @@ export const gameStateSlice = createSlice({
     },
     startBossFight: (state) => {
       state.status = 'bossFight'
+      clearInterval(state.gameLoopInterval)
+      state.gameLoopInterval = NaN
     },
     bossAttack: (state) => {
       if(state.availableSpells.find(x => x.description === SpellList.SpectralRope && !x.available) || state.boss.status === 'frozen' || state.boss.status === 'burnt'){
@@ -328,6 +330,9 @@ export const gameStateSlice = createSlice({
         if (!upgrade || !currentUpgrade || action.payload.blue !== currentUpgrade) {
           return
         }
+        if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
+          return
+        }
         state.availableSpells = state.availableSpells.concat(currentUpgrade[3])
         state.resources = removeResources(currentUpgrade[0], state.resources)
         state.blueFnParams = combineBlueParams(state.blueFnParams, currentUpgrade[2])
@@ -360,6 +365,7 @@ export const selectGreenFnP1 = (state: RootState) => state.gameState.greenFnPara
 export const selectRoomName = (state: RootState) => state.gameState.room.name;
 
 export const selectNextDoors = (state: RootState) => state.gameState.room.options || [];
+export const selectGameLoopInterval = (state: RootState) => state.gameState.gameLoopInterval;
 
 export const selectSpells = (state: RootState) => state.gameState.availableSpells;
 export const selectGameStatus = (state: RootState) => state.gameState.status;
