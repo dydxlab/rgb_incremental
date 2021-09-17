@@ -22,7 +22,7 @@ import {
   removeResources,
   isCostSatisfiable,
   spells1,
-  RoomList, 
+  RoomList,
   SpellList
 } from './Types'
 import { initializeTier1, Item, } from './Items'
@@ -30,17 +30,17 @@ import { caveRoom, getRoomInteractions, getDoorInteractions } from './Quest'
 
 
 
-let GreenUpgrade: [Cost, boolean, GreenFnParams, Spell[]]
-let BlueUpgrade: [Cost, boolean, BlueFnParams, Spell[]]
-let RedUpgrade: [Cost, boolean, RedFnParams, Spell[]]
+let GreenUpgrade: [Cost, boolean, boolean, GreenFnParams, Spell[]]
+let BlueUpgrade: [Cost, boolean, number, BlueFnParams, Spell[]]
+let RedUpgrade: [Cost, boolean, boolean, RedFnParams, Spell[]]
 
 
 export type SlimeBossStatus = "burnable" | "burnt" | "freezable" | "frozen" | "normal" | "attacking" | "inactive";
-const SlimeBossStatuses: Array<SlimeBossStatus> = ["burnable" , "freezable" ,  "normal" ,  "normal" , "attacking" , "inactive", "inactive"]
+const SlimeBossStatuses: Array<SlimeBossStatus> = ["burnable", "freezable", "normal", "normal", "attacking", "inactive", "inactive"]
 export const SlimeBossStatusColors = {
   "burnable": "#ff0000",
   "burnt": "#860f11",
-  "freezable": "#00e4ff", 
+  "freezable": "#00e4ff",
   "frozen": "#00a6b9",
   "normal": "#d2d2d2",
   "attacking": "#000000",
@@ -106,31 +106,31 @@ const initialState: GameState = {
   status: "ready",
   combatLogMessages: [],
   greenUpgrades: [
-    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }, []],
-    [{ green: 29, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }, [spells1.CommuneWithPlants]],
-    [{ green: 105, red: 0, blue: 0, hp: 0 }, false, { linearP1: 4, quadraticP1: 0, twoPowerP1: 0 }, []],
-    [{ green: 82, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 0 }, [spells1.SpectralRope]],
-    [{ green: 379, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0, quadraticP1: 3, twoPowerP1: 0 }, []],
-    [{ green: 1800, red: 0, blue: 7, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }, []],
-    [{ green: 500000, red: 100, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 2 }, [spells1.Heal]],
-    [{ green: 1000000000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }, []],
+    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }, []],
+    [{ green: 29, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 0.3, quadraticP1: 0, twoPowerP1: 0 }, [spells1.CommuneWithPlants]],
+    [{ green: 105, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 4, quadraticP1: 0, twoPowerP1: 0 }, []],
+    [{ green: 82, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 0 }, [spells1.SpectralRope]],
+    [{ green: 379, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 0, quadraticP1: 3, twoPowerP1: 0 }, []],
+    [{ green: 1800, red: 0, blue: 7, hp: 0 }, false, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }, []],
+    [{ green: 300000, red: 100, blue: 0, hp: 0 }, false, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 2 }, [spells1.Heal]],
+    [{ green: 1000000000, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 0.3, quadraticP1: 1, twoPowerP1: 10 }, []],
 
   ],
   redUpgrades: [
-    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }, [spells1.Fireball]],
-    [{ green: 37, red: 0, blue: 1, hp: 0 }, false, { linearP1: 0.3 }, []],
-    [{ green: 105, red: 0, blue: 3, hp: 0 }, false, { linearP1: 4 }, []],
-    [{ green: 10, red: 0, blue: 0, hp: 0 }, false, { linearP1: 0.3 }, []],
-    [{ green: 7000, red: 0, blue: 0, hp: 0 }, false, { linearP1: 8 }, []],
-    [{ green: 61589, red: 0, blue: 55, hp: 0 }, false, { linearP1: 22 }, []],
+    [{ green: 13, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 0.3 }, [spells1.Fireball]],
+    [{ green: 37, red: 0, blue: 1, hp: 0 }, false, false, { linearP1: 0.3 }, []],
+    [{ green: 105, red: 0, blue: 3, hp: 0 }, false, false, { linearP1: 4 }, []],
+    [{ green: 10, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 0.3 }, []],
+    [{ green: 7000, red: 0, blue: 0, hp: 0 }, false, false, { linearP1: 8 }, []],
+    [{ green: 61589, red: 0, blue: 55, hp: 0 }, false, false, { linearP1: 22 }, []],
 
   ],
   blueUpgrades: [
-    [{ green: 9, red: 45, blue: 0, hp: 0 }, false, { normalP1: 0.0002, normalP2: 0.0001 }, []],
-    [{ green: 499, red: 0, blue: 2, hp: 0 }, false, { normalP1: 0, normalP2: 0.5 }, [spells1.FrostRay]],
-    [{ green: 0, red: 389, blue: 21, hp: 0 }, false, { normalP1: 2, normalP2: 0 }, []],
-    [{ green: 0, red: 0, blue: 131, hp: 0 }, false, { normalP1: 0, normalP2: 10 }, []],
-    [{ green: 0, red: 0, blue: 305, hp: 0 }, false, { normalP1: 1, normalP2: 10 }, []],
+    [{ green: 9, red: 45, blue: 0, hp: 0 }, false, 0, { normalP1: 0.0002, normalP2: 0.0001 }, []],
+    [{ green: 499, red: 0, blue: 2, hp: 0 }, false, 0, { normalP1: 0, normalP2: 0.5 }, [spells1.FrostRay]],
+    [{ green: 0, red: 389, blue: 21, hp: 0 }, false, 0, { normalP1: 2, normalP2: 0 }, []],
+    [{ green: 0, red: 0, blue: 131, hp: 0 }, false, 0, { normalP1: 0, normalP2: 10 }, []],
+    [{ green: 0, red: 0, blue: 305, hp: 0 }, false, 0, { normalP1: 1, normalP2: 10 }, []],
   ]
 
 
@@ -192,24 +192,24 @@ export const gameStateSlice = createSlice({
     },
 
     attackBoss: (state, action) => {
-      if(action.payload.description === SpellList.Fireball && state.boss.status === 'burnable'){
+      if (action.payload.description === SpellList.Fireball && state.boss.status === 'burnable') {
         state.boss.status = 'burnt'
         state.boss.bossHp -= 30
-      } else if(action.payload.description === SpellList.Fireball && state.boss.status === 'normal'){
+      } else if (action.payload.description === SpellList.Fireball && state.boss.status === 'normal') {
         state.boss.bossHp -= 20
-      } else if(action.payload.description === SpellList.FrostRay && state.boss.status === 'freezable'){
+      } else if (action.payload.description === SpellList.FrostRay && state.boss.status === 'freezable') {
         state.boss.status = 'frozen'
         state.boss.bossHp -= 30
-      } else if(action.payload.description === SpellList.FrostRay && state.boss.status === 'normal'){
+      } else if (action.payload.description === SpellList.FrostRay && state.boss.status === 'normal') {
         state.boss.bossHp -= 20
-      } else if(action.payload.description === 'Gem Attack' && state.boss.status === 'normal'){
+      } else if (action.payload.description === 'Gem Attack' && state.boss.status === 'normal') {
         state.boss.status = 'inactive'
         state.boss.bossHp -= 10
-      } else if(action.payload.description === 'Gem Attack' && state.availableSpells.find(x => x.description === SpellList.SpectralRope && !x.available) && state.boss.status === 'normal'){
+      } else if (action.payload.description === 'Gem Attack' && state.availableSpells.find(x => x.description === SpellList.SpectralRope && !x.available) && state.boss.status === 'normal') {
         state.boss.status = 'inactive'
         state.boss.bossHp -= 15
       }
-      if (state.boss.bossHp <=0){
+      if (state.boss.bossHp <= 0) {
         state.status = 'victory'
       }
     },
@@ -219,13 +219,13 @@ export const gameStateSlice = createSlice({
       state.gameLoopInterval = NaN
     },
     bossAttack: (state) => {
-      if(state.availableSpells.find(x => x.description === SpellList.SpectralRope && !x.available) || state.boss.status === 'frozen' || state.boss.status === 'burnt'){
+      if (state.availableSpells.find(x => x.description === SpellList.SpectralRope && !x.available) || state.boss.status === 'frozen' || state.boss.status === 'burnt') {
         state.resources.hp -= 3
       } else {
         state.resources.hp -= 5
       }
       state.boss.status = SlimeBossStatuses[Math.round(Math.random() * SlimeBossStatuses.length)]
-      if(state.resources.hp <= 0) {
+      if (state.resources.hp <= 0) {
         state.status = 'gameOver'
       }
 
@@ -239,7 +239,7 @@ export const gameStateSlice = createSlice({
       console.log(state.status)
     },
     boulderKill: (state) => {
-      if(state.room.name === RoomList.Boulder){
+      if (state.room.name === RoomList.Boulder) {
         state.status = "gameOver"
       }
     },
@@ -252,7 +252,8 @@ export const gameStateSlice = createSlice({
       state.gameLoopInterval = 0;
     },
     addCombatLogMessages: (state, action) => {
-      state.combatLogMessages.push(action.payload)
+      console.log('unshift');
+      state.combatLogMessages.unshift(action.payload)
     },
     clearCombatLogMessages: (state) => {
       state.combatLogMessages = []
@@ -287,12 +288,12 @@ export const gameStateSlice = createSlice({
         return
       }
       state.resources = removeResources(currentChoice.cost, state.resources)
-      if (currentChoice.destination.options.length == 0 ) {
+      if (currentChoice.destination.options.length == 0) {
         state.status = 'victory'
       }
 
       state.room = currentChoice.destination
-      
+
 
     },
     upgrade: (state, action) => {
@@ -303,11 +304,12 @@ export const gameStateSlice = createSlice({
           return
         }
         if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
+          upgrade[2] = true
           return
         }
-        state.availableSpells = state.availableSpells.concat(currentUpgrade[3])
+        state.availableSpells = state.availableSpells.concat(currentUpgrade[4])
         state.resources = removeResources(currentUpgrade[0], state.resources)
-        state.greenFnParams = combineGreenParams(state.greenFnParams, currentUpgrade[2])
+        state.greenFnParams = combineGreenParams(state.greenFnParams, currentUpgrade[3])
         upgrade[1] = true;
       }
       if (action.payload.red) {
@@ -317,11 +319,12 @@ export const gameStateSlice = createSlice({
           return
         }
         if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
+          upgrade[2] = true
           return
         }
-        state.availableSpells = state.availableSpells.concat(currentUpgrade[3])
+        state.availableSpells = state.availableSpells.concat(currentUpgrade[4])
         state.resources = removeResources(currentUpgrade[0], state.resources)
-        state.redFnParams = combineRedParams(state.redFnParams, currentUpgrade[2])
+        state.redFnParams = combineRedParams(state.redFnParams, currentUpgrade[3])
         upgrade[1] = true;
       }
       if (action.payload.blue) {
@@ -331,11 +334,13 @@ export const gameStateSlice = createSlice({
           return
         }
         if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
+          console.log(upgrade[2])
+          upgrade[2] += 1
           return
         }
-        state.availableSpells = state.availableSpells.concat(currentUpgrade[3])
+        state.availableSpells = state.availableSpells.concat(currentUpgrade[4])
         state.resources = removeResources(currentUpgrade[0], state.resources)
-        state.blueFnParams = combineBlueParams(state.blueFnParams, currentUpgrade[2])
+        state.blueFnParams = combineBlueParams(state.blueFnParams, currentUpgrade[3])
         upgrade[1] = true;
       }
     },

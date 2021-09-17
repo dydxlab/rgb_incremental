@@ -10,71 +10,71 @@ export function jungleRoomInteraction(state, spell) {
     if (spell.description === SpellList.Fireball && !state.room.statuses.includes('burnt')) {
         state.room.statuses.push('burnt');
         state.redFnParams = combineRedParams({ linearP1: 3 }, state.redFnParams)
-        state.combatLogMessages.push('You feed on the energy from the withering vines')
+        state.combatLogMessages.unshift('You feed on the energy from the withering vines')
     } else if (spell.description === SpellList.CommuneWithPlants && !state.room.statuses.includes('burnt')) {
-        state.combatLogMessages.push('Vines sway in sync and you hear a whisper "Seek the golden slug"')
+        state.combatLogMessages.unshift('Vines sway in sync and you hear a whisper "Seek the golden slug"')
     } else {
-        state.combatLogMessages.push('No effect')
+        state.combatLogMessages.unshift('No effect')
     }
 }
 
 export function caveRoomInteraction(state, spell) {
     if (spell.description === SpellList.FrostRay && !state.room.statuses.includes('frozen')) {
         state.room.statuses.push('frozen');
-        state.combatLogMessages.push('Water freezes into a path to the far wall')
+        state.combatLogMessages.unshift('Water freezes into a path to the far wall')
     } else if (spell.description === SpellList.SpectralRope && state.room.statuses.includes('frozen')) {
-        state.combatLogMessages.push('You climb in to a narrow fissure, revealing a the Moon Door')
+        state.combatLogMessages.unshift('You climb in to a narrow fissure, revealing a the Moon Door')
         state.room.options.push(moonDoor);
     } else if (spell.description === SpellList.CommuneWithPlants && !state.room.statuses.includes('burnt')) {
-        state.combatLogMessages.push('A phosphorescent mushroom breathes in and lets out a puff of spores in the shape of a bridge and rope')
+        state.combatLogMessages.unshift('A phosphorescent mushroom breathes in and lets out a puff of spores in the shape of a bridge and rope')
     } else {
-        state.combatLogMessages.push('No effect')
+        state.combatLogMessages.unshift('No effect')
     }
 }
 
 export function desertRoomInteraction(state, spell) {
     if (spell.description === SpellList.Fireball) {
-        state.combatLogMessages.push('Molten glass sinks in to the sand')
+        state.combatLogMessages.unshift('Molten glass sinks in to the sand')
     } else if (spell.description === SpellList.CommuneWithPlants ) {
-        state.combatLogMessages.push('Wails from the void echo in your head. You stumble and fall to your knees')
+        state.combatLogMessages.unshift('Wails from the void echo in your head. You stumble and fall to your knees')
         state.resources.hp -= 10;
     } else {
-        state.combatLogMessages.push('No effect')
+        state.combatLogMessages.unshift('No effect')
     }
 }
 
 export function treeTopsRoomInteraction(state, spell) {
     if (spell.description === SpellList.Fireball) {
-        state.combatLogMessages.push('Leaves crackle and crumple but the trees stand strong')
+        state.combatLogMessages.unshift('Leaves crackle and crumple but the trees stand strong')
     } else if (spell.description === SpellList.CommuneWithPlants ) {
-        state.combatLogMessages.push('Trees lean slightly to the left')
+        state.combatLogMessages.unshift('Trees lean slightly to the left')
     } else if (spell.description === SpellList.FrostRay && !state.room.statuses.includes('frozen')) {
         state.room.statuses.push('frozen');
-        state.combatLogMessages.push('Branches shrink back, revealing the Rabbit Door')
+        state.combatLogMessages.unshift('Branches shrink back, revealing the Rabbit Door')
         state.room.options.push(rabbitDoor); 
     } else {
-        state.combatLogMessages.push('No effect')
+        state.combatLogMessages.unshift('No effect')
     }
 }
 
 export function rabbitRoomInteraction(state, spell) {
     if (spell.description === SpellList.Fireball ) {
         state.room.statuses.push('burnt');
-        state.combatLogMessages.push('Charred remains litter the floor. Rocks begin to fall from the ceiling')
+        state.combatLogMessages.unshift('Charred remains litter the floor. Rocks begin to fall from the ceiling')
         state.resources.hp -= 10;
         //Add hpFn params for faster reduction for the rest of the round
     } else if (spell.description === SpellList.Heal ) {
-        state.combatLogMessages.push('The rabbit leaps around the room with great vigor. You feel energized just watching it.')
+        state.combatLogMessages.unshift('The rabbit leaps around the room with great vigor. You feel energized just watching it.')
         //TODO: More lore
         //TODO: more, maybe better greenFnParams, 
     } else if (spell.description === SpellList.FrostRay && !state.room.statuses.includes('frozen') && !state.room.statuses.includes('burnt')) {
         state.room.statuses.push('frozen');
-        state.combatLogMessages.push('You enrage the rabbit. It lunges at you, biting your index finger off, then bounces away')
+        state.combatLogMessages.unshift('You enrage the rabbit. It lunges at you, biting your index finger off, then bounces away')
     } else if (spell.description === SpellList.SpectralRope) {
-        state.combatLogMessages.push('You lower a rope through a crack in the floor, giving you a better avenue to proceed')
+        state.combatLogMessages.unshift('You lower a rope through a crack in the floor, giving you a better avenue to proceed')
         state.room.options.push(ropeMonsterDoor)
     } else {
-        state.combatLogMessages.push('No effect')
+        state.combatLogMessages.unshift('No effect')
     }
 }
 
@@ -83,15 +83,15 @@ export function monstersRoomInteraction(state, spell) {
 }
 
 export function boulderDodgeRoomInteraction(state, spell) {
-    state.combatLogMessages.push('No effect')
+    state.combatLogMessages.unshift('No effect')
 }
 
 
 export function desertDoorInteraction(state, spell) {
     if (spell.type === 'Fireball') {
-        state.combatLogMessages.push('Flames dance across the sand haplessly');
+        state.combatLogMessages.unshift('Flames dance across the sand haplessly');
     } else {
-        state.combatLogMessages.push('No effect');
+        state.combatLogMessages.unshift('No effect');
     }
 }
 export function monstersDoorInteraction(state: Draft<GameState>, spell) {
@@ -103,7 +103,7 @@ export function monstersDoorInteraction(state: Draft<GameState>, spell) {
                 o.cost[c as keyof typeof o.cost] =  o.cost[c as keyof typeof o.cost] / 2
             }
         })
-        state.combatLogMessages.push('You batter the monsters with your magic');
+        state.combatLogMessages.unshift('You batter the monsters with your magic');
 
     } else if ( spell.description === SpellList.FrostRay ) {
         state.room.statuses.push('frozen');
@@ -113,7 +113,7 @@ export function monstersDoorInteraction(state: Draft<GameState>, spell) {
                 o.cost[c as keyof typeof o.cost] =  o.cost[c as keyof typeof o.cost] / 2
             }
         })
-        state.combatLogMessages.push('You batter the monsters with your magic');
+        state.combatLogMessages.unshift('You batter the monsters with your magic');
 
     } else if (spell.description === 'Heal' ) {
         state.room.options.map(o => {
@@ -121,9 +121,9 @@ export function monstersDoorInteraction(state: Draft<GameState>, spell) {
                 o.cost[c as keyof typeof o.cost] =  o.cost[c as keyof typeof o.cost] * 2
             }
         })
-        state.combatLogMessages.push('Your magic empowers the monsters');
+        state.combatLogMessages.unshift('Your magic empowers the monsters');
     } else {
-        state.combatLogMessages.push('No effect')
+        state.combatLogMessages.unshift('No effect')
     }
 }
 

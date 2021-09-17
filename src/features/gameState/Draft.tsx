@@ -111,7 +111,7 @@ export const Draft: FunctionComponent = () => {
           dispatch(incrementBlue());
           dispatch(incrementHP());
         },
-        1000);
+        80);
       dispatch(setGameLoopIntervals(intval))
       audio.volume = 0.2;
       audio.play();
@@ -122,10 +122,12 @@ export const Draft: FunctionComponent = () => {
   return (
     <div>
       <div className={styles.row}>
-
+      <img src="./red_quartz.svg" alt="active" className={styles.valueImage} />
         <span className={styles.value} style={{ 'color': 'red' }}>{formatResourceValue(red)}</span>
 
-        <span className={styles.value} style={{ 'color': 'limegreen' }}>{formatResourceValue(green)}</span>
+        <img src="./09_Emerald.png" alt="active" className={styles.valueImage} /> <span className={styles.value} style={{ 'color': 'limegreen' }}>{formatResourceValue(green)}</span>
+        
+        <img src="./blue_sapphire.svg" alt="active" className={styles.valueImage} />
         <span className={styles.value} style={{ 'color': 'steelblue' }}>{formatResourceValue(blue)}</span>
 
 

@@ -4,6 +4,7 @@ import { CYOA } from './features/gameState/CYOA';
 import { Draft } from './features/gameState/Draft';
 import { GameOver } from './features/gameState/GameOver';
 import { TechTree } from './features/gameState/TechTree';
+import { Maze } from './features/maze/Maze';
 import './App.css';
 import Particles from "react-tsparticles";
 

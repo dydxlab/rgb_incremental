@@ -101,6 +101,17 @@ h2 {
   width: 16px;
 }
 
+.valueImage {
+  height: 78px; 
+  width: 78px;
+}
+
+.destinationImage {
+  height: 48px; 
+  width: 48px;
+  display:block;
+    margin:auto;
+}
 
 .hpheart {
   height: 32px; 
@@ -261,4 +272,61 @@ h2 {
   overflow: hidden;
   height: 100%;
   z-index: 2;
+}
+
+.sblock {
+  display:flex; 
+  flex-direction:column-reverse;
+}
+
+.sblock::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+  border-radius:10px;
+}
+.sblock::-webkit-scrollbar-track{
+  border-radius:10px;
+  background-color:rgba(41, 41, 41, 0.5)
+}
+.sblock::-webkit-scrollbar-thumb{
+  border-radius:10px;
+  background-color:rgba(200, 200, 200, 0.2)
+}
+.sblock::-webkit-scrollbar-corner{
+  background-color:rgba(200, 200, 200, 0.2);
+  border-color:rgba(200, 200, 200, 0.2)
+}
+
+button[class*='errorButton-'] {
+  appearance: none;
+  background: none;
+  font-size: 16px;
+  padding-left: 4px;
+  padding-right: 4px;
+  outline: none;
+  border: 2px solid transparent;
+  color: rgb(212, 212, 212);
+  padding-bottom: 4px;
+  cursor: pointer;
+  background-color: rgba(112, 76, 182, 0.1);
+  font-weight: 600;
+  border-radius: 2px;
+  transition: all 0.15s;
+  animation: errorButtonBorder 1 3s ease-in-out;
+
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .errorButton {
+    animation: errorButtonBorder 1 3s ease-in-out;
+  }
+}
+
+@keyframes errorButtonBorder {
+	0% {
+		border-color: #f84c40;
+	}
+	100% {
+		border-color: #00000000;
+	}
 }
