@@ -45,7 +45,7 @@ export const TechTree: FunctionComponent = () => {
                 }
                 {blueUpgradeCost &&
                     <button
-                        className={ blueUpgradeCost?.[2] > 0 ? 'errorButton-' + blueUpgradeCost?.[2] : styles.button }
+                        className={ blueUpgradeCost?.[2] > 0 ? styles.errorButton + '-' + blueUpgradeCost?.[2] : styles.button }
                         onClick={() => dispatch(upgrade({ 'blue': blueUpgradeCost }))}
                     > {blueUpgradeCost?.[2]}
                         Blue Upgrade - {getCostString(blueUpgradeCost?.[0])}
