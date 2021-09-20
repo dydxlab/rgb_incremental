@@ -48,7 +48,11 @@ export const SlimeBossStatusColors = {
 }
 
 
-
+export interface Achievement {
+  name: String;
+  requirement: number;
+  description?: String;
+}
 
 export interface SlimeBoss {
   bossHp: number;
@@ -82,9 +86,9 @@ export interface GameState {
 
 const initialState: GameState = {
   resources: {
-    red: 0, // 0
-    green: 0, // 20
-    blue: 3, //3
+    red: 1000000, // 0
+    green: 10000000, // 20
+    blue: 100000003, //3
     hp: 100
   },
   boss: {
@@ -234,9 +238,7 @@ export const gameStateSlice = createSlice({
       state.boss.bossHp -= (4 * Math.random())
       if (state.boss.bossHp <= 0) {
         state.status = "victory"
-        console.log(state.status)
       }
-      console.log(state.status)
     },
     boulderKill: (state) => {
       if (state.room.name === RoomList.Boulder) {
@@ -334,7 +336,6 @@ export const gameStateSlice = createSlice({
           return
         }
         if (!isCostSatisfiable(currentUpgrade[0], state.resources)) {
-          console.log(upgrade[2])
           upgrade[2] += 1
           return
         }

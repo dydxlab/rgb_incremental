@@ -65,7 +65,20 @@ export enum RoomList {
     Boulder = "Boulder",
     TreeTops = "Tree Tops",
     Monsters = "Monsters",
-    FungalColony = "Fungal Colony"
+    FungalColony = "Fungal Colony",
+    LavaFlow = "Lava Flow",
+    CrumblingBridge="Crumbling Bridge",
+    TrappedInsect="Trapped Insect",
+    Wastes="Wastes",
+    Lost="Lost",
+    IceChamber="Ice Chamber",
+    MagmaWaterfall="Magma Waterfall",
+    StatueRoom="Statue Room",
+    GraniteRaft="Granite Raft",
+    CageTrap="Cage Trap",
+    VolcanoBoss="Volcano Boss",
+    Altar="Altar",
+    ObsidianHallway="Obsidian Hallway",
 }
 
 

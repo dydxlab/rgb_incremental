@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="110" height="110">
+
+ <g>
+  <title>Layer 1</title>
+  <circle cx="54" cy="54" r="1" stroke="#a91846" fill="#a91846">
+    <animate attributeName="r" values="50;1" begin="0s" dur="10s" repeatCount="1"/>
+    </circle>
+<circle cx="54" cy="54" r="50" stroke="#73103055" stroke-width="8" fill="#00000000" />
+
+ </g>
+</svg>

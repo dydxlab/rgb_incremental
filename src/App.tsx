@@ -5,6 +5,7 @@ import { Draft } from './features/gameState/Draft';
 import { GameOver } from './features/gameState/GameOver';
 import { TechTree } from './features/gameState/TechTree';
 import { Maze } from './features/maze/Maze';
+import { Thermite } from './features/thermite_bossfight/Thermite'
 import './App.css';
 import Particles from "react-tsparticles";
 

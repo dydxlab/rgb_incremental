@@ -145,8 +145,20 @@ export function getRoomInteractions(room: RoomList) {
     .with(RoomList.TempleRuins,() => EmptyFn)
     .with(RoomList.TempleGuardian,() => EmptyFn)  
     .with(RoomList.Sandstorm,() => EmptyFn)
+    .with(RoomList.LavaFlow ,() => EmptyFn)
+    .with(RoomList.CrumblingBridge,() => EmptyFn)
+    .with(RoomList.TrappedInsect,() => EmptyFn)
+    .with(RoomList.Wastes,() => EmptyFn)
+    .with(RoomList.Lost,() => EmptyFn)
+    .with(RoomList.IceChamber,() => EmptyFn)
+    .with(RoomList.MagmaWaterfall,() => EmptyFn)
+    .with(RoomList.StatueRoom,() => EmptyFn)
+    .with(RoomList.GraniteRaft,() => EmptyFn)
+    .with(RoomList.CageTrap,() => EmptyFn)
+    .with(RoomList.VolcanoBoss,() => EmptyFn)
+    .with(RoomList.Altar,() => EmptyFn)
+    .with(RoomList.ObsidianHallway,() => EmptyFn)
     .exhaustive()
-
 }
 
 export function getDoorInteractions(room: RoomList){
@@ -167,6 +179,19 @@ export function getDoorInteractions(room: RoomList){
     .with(RoomList.TempleRuins,() => EmptyFn)
     .with(RoomList.TempleGuardian,() => EmptyFn)
     .with(RoomList.Sandstorm,() => EmptyFn)
+    .with(RoomList.LavaFlow ,() => EmptyFn)
+    .with(RoomList.CrumblingBridge,() => EmptyFn)
+    .with(RoomList.TrappedInsect,() => EmptyFn)
+    .with(RoomList.Wastes,() => EmptyFn)
+    .with(RoomList.Lost,() => EmptyFn)
+    .with(RoomList.IceChamber,() => EmptyFn)
+    .with(RoomList.MagmaWaterfall,() => EmptyFn)
+    .with(RoomList.StatueRoom,() => EmptyFn)
+    .with(RoomList.GraniteRaft,() => EmptyFn)
+    .with(RoomList.CageTrap,() => EmptyFn)
+    .with(RoomList.VolcanoBoss,() => EmptyFn)
+    .with(RoomList.Altar,() => EmptyFn)
+    .with(RoomList.ObsidianHallway,() => EmptyFn)
     .exhaustive()
 }
 
@@ -190,6 +215,86 @@ export let treasureRoom: Room = {
     ]
 }
 
+export let volcanoBossFightRoom: Room = {
+    name: RoomList.VolcanoBoss,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.VolcanoBoss, action: "Challenge the Volcano Boss", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: FakeRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let cageTrapRoom: Room = {
+    name: RoomList.CageTrap,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.VolcanoBoss, action: "Challenge the Volcano Boss", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: volcanoBossFightRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let graniteRaftRoom: Room = {
+    name: RoomList.GraniteRaft,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.CageTrap, action: "Drift aimlessly", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: cageTrapRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let trappedInsectRoom: Room = {
+    name: RoomList.TrappedInsect,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.GraniteRaft, action: "Ride the granite raft", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: graniteRaftRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let altarRoom: Room = {
+    name: RoomList.TrappedInsect,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.TrappedInsect, action: "Move ahead into the darkness", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: trappedInsectRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let obsidianHallway: Room = {
+    name: RoomList.ObsidianHallway,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.Altar, action: "Kneel at the steps", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: altarRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let lavaFlowRoom: Room = {
+    name: RoomList.LavaFlow,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.ObsidianHallway, action: "Kneel at the steps", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: obsidianHallway, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Altar, action: "Kneel at the steps", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: altarRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let crumblingBridge: Room = {
+    name: RoomList.CrumblingBridge,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.LavaFlow, action: "Leap from stone to stone", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: lavaFlowRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let lost: Room = {
+    name: RoomList.CrumblingBridge,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.Cave, action: "Journey On", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: FakeRoom, statuses: new Array<StructureStatus>() },
+    ]
+}
+
+export let wastes: Room = {
+    name: RoomList.Wastes,
+    statuses: new Array<StructureStatus>(),
+    options: [
+        { title: RoomList.Lost, action: "Navigate the wastes", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: lost, statuses: new Array<StructureStatus>() },
+    ]
+}
 
 
 export let templeGuardianRoom: Room = {
@@ -197,7 +302,7 @@ export let templeGuardianRoom: Room = {
     statuses: new Array<StructureStatus>(),
     options: [
         
-        { title: RoomList.Cave, action: "Challenge the Temple Guardn", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: FakeRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Cave, action: "Challenge the Temple Guardian", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: FakeRoom, statuses: new Array<StructureStatus>() },
 
     ]
 }
@@ -206,7 +311,7 @@ export let oasisRoom: Room = {
     name: RoomList.Oasis,
     statuses: new Array<StructureStatus>(),
     options: [
-        { title: RoomList.TempleGuardian, action: "Challenge the Temple Guardn", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: templeGuardianRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.TempleGuardian, action: "Challenge the Temple Guardian", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: templeGuardianRoom, statuses: new Array<StructureStatus>() },
 
     ]
 }
@@ -224,6 +329,7 @@ export let volcanoRoom: Room = {
     name: RoomList.Volcano,
     statuses: new Array<StructureStatus>(),
     options: [
+        { title: RoomList.LavaFlow, action: "Brave the fiery rocks", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: lavaFlowRoom, statuses: new Array<StructureStatus>() },
         { title: RoomList.Unknown, action: "Plunge in to the unknown", cost: { green: 50120, red: 0, blue: 0, hp: 0 }, destination: unknownRoom, statuses: new Array<StructureStatus>() },
     ]
 }
@@ -299,6 +405,7 @@ export let desertRoom: Room = {
     statuses: new Array<StructureStatus>(),
     options: [
         { title: RoomList.Volcano, action: "Ascend the cliff face", cost: { green: 0, red: 10000, blue: 0, hp: 0 }, destination: volcanoRoom, statuses: new Array<StructureStatus>() },
+        { title: RoomList.Wastes, action: "Shy away from the blazing mountain", cost: { green: 0, red: 10000, blue: 0, hp: 0 }, destination: wastes, statuses: new Array<StructureStatus>() },
 
     ]
 }

@@ -297,7 +297,7 @@ h2 {
   border-color:rgba(200, 200, 200, 0.2)
 }
 
-button[class*='errorButton-'] {
+button.errorButton {
   appearance: none;
   background: none;
   font-size: 16px;
@@ -316,6 +316,10 @@ button[class*='errorButton-'] {
 
 }
 
+button.errorButton:active {
+  animation: errorButtonBorder1 1 3s ease-in-out;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .errorButton {
     animation: errorButtonBorder 1 3s ease-in-out;
@@ -323,6 +327,21 @@ button[class*='errorButton-'] {
 }
 
 @keyframes errorButtonBorder {
+	0% {
+		border-color: #f84c40;
+	}
+	100% {
+		border-color: #00000000;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .errorButton {
+    animation: errorButtonBorder1 1 3s ease-in-out;
+  }
+}
+
+@keyframes errorButtonBorder1 {
 	0% {
 		border-color: #f84c40;
 	}

@@ -77,7 +77,12 @@ export const CYOA: FunctionComponent = () => {
 
                 >Reset</button>
             </div>
+           
             <div className={styles.row} >
+            {roomName === RoomList.Boulder && 
+            
+            <img src='./timeout_circle.svg'/>
+            }
             <div className={styles.sblock} style={{ 'color': 'lightgrey', 'fontFamily': 'monospace', 'textAlign': 'left', 'overflow': 'auto', 'height':'70px', 'width':'40em', 'fontSize': '14px' }}>
             {messages && messages.map(message => (
                 <span>{message}</span>
@@ -91,8 +96,11 @@ export const CYOA: FunctionComponent = () => {
                 (
                     <div style={{ 'backgroundColor': 'rgba(255,255,255,0.1)', border: '0.3rem groove rgba(200,200,200 ,0.2)', borderRadius: '0.5rem', margin: '0.3rem' }}>
                         <img src="./dessert.svg" alt="heart" className={styles.destinationImage} />
-
+                        <br />
+                        <span>{option.title}</span>
                         <button
+                            style={{background: 'url(./timeout_bar.svg) no-repeat'}}
+
                             className={styles.button}
                             onClick={() => goStepQuest({ "choice": option })}
 
