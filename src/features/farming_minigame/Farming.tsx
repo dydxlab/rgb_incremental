@@ -101,12 +101,15 @@ export function Farming() {
 
   return (
     <div>
-      <h3 style={{ 'color': 'rgb(222, 222, 222)' }}>Mushroom Minigame</h3>
-
+      <h3 style={{ 'color': 'rgb(222, 222, 222)'  }}>Mushroom Minigame</h3>
+      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Red mushrooms give 1 point and add 1 point to active diagonal mushrooms</span><br/>
+      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Green mushrooms give 3 point and set active mushrooms to the left and right to 0 points</span><br/>
+      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Blue mushrooms give 2 points and add 1 point to active mushrooms above and below them</span><br/>
       <br />
       {getBoard()}
-      {status === 'finished' && (<div><h3 style={{'color':'rgb(255, 255, 255)'}}>Your Score:{score}</h3>
-      <h3 style={{'color':'rgb(255, 255, 255)'}}>Max Possible Score:{maxScore}</h3>
+      {status === 'finished' && (<div><span style={{'color':'rgb(255, 255, 255)'}}>Your Score:{score}</span>
+      <br/>
+      <span style={{'color':'rgb(255, 255, 255)'}}>Max Possible Score:{maxScore}</span>
       <div className={styles.row}>
       <button className={styles.button}
       style={{'backgroundColor': 'goldenrod', color:'white'}}
