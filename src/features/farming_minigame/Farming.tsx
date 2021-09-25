@@ -3,19 +3,19 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
   selectGrid,
-  triggerThermite,
+  activateCell,
   enableButtons,
   selectStatus,
-  calculateDamage,
   startGrid,
-  selectBossHP, 
-  winThermiteBossFight
-} from './thermiteSlice';
-import styles from './Thermite.module.css';
+  selectScore,
+  selectMaxScore
+} from './farmingSlice';
+import styles from './Farming.module.css';
 
-export function Thermite() {
+export function Farming() {
   const grid = useAppSelector(selectGrid);
-  const bossHP = useAppSelector(selectBossHP);
+  const score = useAppSelector(selectScore);
+  const maxScore = useAppSelector(selectMaxScore);
   const status = useAppSelector(selectStatus);
   const dispatch = useAppDispatch();
  
@@ -27,22 +27,20 @@ export function Thermite() {
     }
     switch (cellValue) {
       case 0: return styles.button;
-      case 1: return styles.buttonThermite;
-      case 2: return styles.buttonThermiteCorrect;
-      case 3: return styles.buttonThermiteWrong;
+      case 1: return styles.greenInactive;
+      case 2: return styles.blueInactive;
+      case 3: return styles.redInactive;
+      case 4: return styles.greenActive;
+      case 5: return styles.blueActive;
+      case 6: return styles.redActive;
+
     }
   }
 
   function runLoop() {
     console.log('loop')
-    if(bossHP <= 0){ 
-      dispatch(winThermiteBossFight())
-      return
-    }
-    setTimeout(() => dispatch(startGrid()), 500);
-    setTimeout(() => dispatch(enableButtons()), 6500);
-    setTimeout(() => dispatch(calculateDamage()), 13000);
-    setTimeout(() => runLoop(), 17000);
+    setTimeout(() => dispatch(startGrid()), 100);
+    setTimeout(() => dispatch(enableButtons()), 100);
   }
 
   function getBoard() {
@@ -81,8 +79,8 @@ export function Thermite() {
           {grid && grid.map((row, i) => {
             return (<div className={styles.row}>
               {row.map((cell, j) =>
-              (<button disabled={status !== 'started'} className={getButtonStyle(cell, status)}
-                onClick={() => dispatch(triggerThermite([i, j]))}
+              (<button disabled={status === 'finished'} className={getButtonStyle(cell, status)}
+                onClick={() => dispatch(activateCell([i, j]))}
 
               >O</button>)
               )
@@ -103,17 +101,22 @@ export function Thermite() {
 
   return (
     <div>
-      <h2 style={{ 'color': 'rgb(255, 255, 255)' }}>Volcano Boss</h2>
-      <img src='./flying_dragon.gif' className="App-logo" style={{height:'192px', width:'192px'}}alt="logo" />
-      <br></br>
-      <svg xmlns="http://www.w3.org/2000/svg" width="350" height="50">
-        <g>
-          <rect id="svg_1" height="50" width={350 * (bossHP / 100)} y="0" x="0" stroke="#000" fill="#00b977" />
-          <rect id="svg_2" height="50" width={350 - (350 * (bossHP / 100))} y="0" x={350 * (bossHP / 100)} stroke="#000" fill="#af1c1f" />
-        </g>
-      </svg>
+      <h3 style={{ 'color': 'rgb(222, 222, 222)' }}>Mushroom Minigame</h3>
+
       <br />
       {getBoard()}
+      {status === 'finished' && (<div><h3 style={{'color':'rgb(255, 255, 255)'}}>Your Score:{score}</h3>
+      <h3 style={{'color':'rgb(255, 255, 255)'}}>Max Possible Score:{maxScore}</h3>
+      <div className={styles.row}>
+      <button className={styles.button}
+      style={{'backgroundColor': 'goldenrod', color:'white'}}
+        onClick={runLoop
+        }
+
+      >Start</button>
+      </div>
+      </div>)
+      }
     </div>
   );
 }

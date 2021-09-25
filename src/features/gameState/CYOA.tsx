@@ -14,7 +14,8 @@ import {
     resetState,
     boulderKill,
     addCombatLogMessages,
-    startBossFight
+    startTempleGuardianBossFight,
+    startThermiteBossFight
 } from './gameStateSlice';
 import { Spell, RoomList, SpellList } from './Types'
 import { getCostString } from './Utils'
@@ -49,8 +50,10 @@ export const CYOA: FunctionComponent = () => {
             dispatch(addCombatLogMessages('An enormous boulder cascades toward you.'))
 
             setTimeout(() => dispatch(boulderKill()), 10000)
+        } else if (choice.choice.title === RoomList.VolcanoBoss) {
+            dispatch(startThermiteBossFight());
         } else if (choice.choice.title === RoomList.TempleGuardian) {
-            dispatch(startBossFight());
+            dispatch(startTempleGuardianBossFight());
         }
     }
 
@@ -60,6 +63,21 @@ export const CYOA: FunctionComponent = () => {
             .with(SpellList.Fireball, () => <img src="./Element_A_Fire2.png" alt={spellName} title={spellName} className={styles.spellstatus} />)
             .with(SpellList.FrostRay, () => <img src="./Element_B_Lightning2.png" alt={spellName} title={spellName} className={styles.spellstatus} />)
             .otherwise(() => <img src="./fireball.svg" alt={spellName} title={spellName} className={styles.spellstatus} />)
+    }
+
+    function getProgressBar() {
+        return (
+            <svg xmlns="http://www.w3.org/2000/svg" width="350" height="50">
+
+            <g>
+            
+            <rect id="svg_2" height="50" width="0" y="0" x="0" stroke="#00000000" fill="#47923aa3">
+                <animate attributeName="width" values="100;0" begin="0s" dur="15s" repeatCount="1"/>
+
+            </rect>
+            </g>
+            </svg>
+        )
     }
 
 
@@ -99,9 +117,11 @@ export const CYOA: FunctionComponent = () => {
                         <br />
                         <span>{option.title}</span>
                         <button
-                            style={{background: 'url(./timeout_bar.svg) no-repeat'}}
+                         id={option.title} 
+                         key={option.title} 
+                            style={{backgroundImage: 'url(./timeout_bar.svg)',  backgroundRepeat: 'no-repeat'}}
 
-                            className={styles.button}
+                            className={[styles.button, styles.timeoutBar].join(' ')}
                             onClick={() => goStepQuest({ "choice": option })}
 
                         >

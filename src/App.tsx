@@ -6,6 +6,7 @@ import { GameOver } from './features/gameState/GameOver';
 import { TechTree } from './features/gameState/TechTree';
 import { Maze } from './features/maze/Maze';
 import { Thermite } from './features/thermite_bossfight/Thermite'
+import { Farming } from './features/farming_minigame/Farming'
 import './App.css';
 import Particles from "react-tsparticles";
 
@@ -102,7 +103,7 @@ function App() {
         
         <div style={{zIndex: 1, backgroundColor: 'rgba(85, 85, 85, 0.3)'}}>
         <img src={logo} className="App-logo" alt="logo" />
-        <GameOver />
+        <Farming />
         </div>
       </header>
       

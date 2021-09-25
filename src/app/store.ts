@@ -4,6 +4,8 @@ import { combineReducers } from 'redux'
 import counterReducer from '../features/counter/counterSlice';
 import gameStateReducer from '../features/gameState/gameStateSlice';
 import thermiteReducer from '../features/thermite_bossfight/thermiteSlice';
+import farmingReducer from '../features/farming_minigame/farmingSlice';
+
 
 const persistedState = localStorage.getItem('reduxState') 
                        ? JSON.parse(localStorage.getItem('reduxState') || '{}')
@@ -15,7 +17,8 @@ export const store = configureStore({
   reducer: {
     counter: counterReducer,
     gameState: gameStateReducer,
-    thermite: thermiteReducer
+    thermite: thermiteReducer,
+    farming: farmingReducer
   },
   preloadedState: persistedState
 },);

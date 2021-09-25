@@ -102,8 +102,8 @@ h2 {
 }
 
 .valueImage {
-  height: 78px; 
-  width: 78px;
+  height: 80px; 
+  width: 40px;
 }
 
 .destinationImage {
@@ -348,4 +348,25 @@ button.errorButton:active {
 	100% {
 		border-color: #00000000;
 	}
+}
+
+
+
+.timeoutBar {
+  background-size: 0% 0%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .timeoutBar {
+    animation: timeoutBarShrink 1 10s linear;
+  }
+}
+
+@keyframes timeoutBarShrink {
+  0% {
+    background-size: 100% 100%;
+  }
+  100% {
+    background-size: 0% 100%;
+  }
 }

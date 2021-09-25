@@ -3,6 +3,7 @@ import React, { useState, FunctionComponent } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 
 import { GameWrapper } from './GameWrapper'
+import { Thermite } from '../thermite_bossfight/Thermite'
 import { BossFight } from './BossFight'
 import {
     clearGameLoopIntervals,
@@ -76,7 +77,8 @@ export const GameOver: FunctionComponent = () => {
                         >
                             Start
                         </button></div>
-                    case 'bossFight': return <BossFight />
+                    case 'tgBossFight': return <BossFight />
+                    case 'thermiteBossFight': return <Thermite />
                     default: return <GameWrapper></GameWrapper>
                 }
             })()

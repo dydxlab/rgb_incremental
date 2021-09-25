@@ -122,12 +122,12 @@ export const Draft: FunctionComponent = () => {
   return (
     <div>
       <div className={styles.row}>
-      <img src="./red_quartz.svg" alt="active" className={styles.valueImage} />
+      <img src="./red_rupee_6color.png" alt="active" className={styles.valueImage} />
         <span className={styles.value} style={{ 'color': 'red' }}>{formatResourceValue(red)}</span>
 
-        <img src="./09_Emerald.png" alt="active" className={styles.valueImage} /> <span className={styles.value} style={{ 'color': 'limegreen' }}>{formatResourceValue(green)}</span>
+        <img src="./green_rupee_pxl.png" alt="active" className={styles.valueImage} /> <span className={styles.value} style={{ 'color': 'limegreen' }}>{formatResourceValue(green)}</span>
         
-        <img src="./blue_sapphire.svg" alt="active" className={styles.valueImage} />
+        <img src="./blue_rupee_6color.png" alt="active" className={styles.valueImage} />
         <span className={styles.value} style={{ 'color': 'steelblue' }}>{formatResourceValue(blue)}</span>
 
 

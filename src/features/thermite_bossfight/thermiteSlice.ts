@@ -4,17 +4,23 @@ import { RootState, AppThunk } from '../../app/store';
 export interface ThermiteState {
   grid: Array<Array<number>>;
   status: 'idle' | 'starting' | 'started' | 'finished';
+  bossHP: number;
   enabled: boolean;
 }
-let n = 4
-let randomGrid = [...Array(n).keys()].map(i => [...Array(n).keys()].map(j => Math.round(Math.random())))
-console.log(randomGrid)
+
 const initialState: ThermiteState = {
   //grid: [[0, 0], [1, 0]],
-  grid: randomGrid,
+  grid: initializeGrid(),
   status: 'idle',
+  bossHP: 100,
   enabled: false
 };
+
+function initializeGrid(){
+  let n = 4
+  let randomGrid = [...Array(n).keys()].map(i => [...Array(n).keys()].map(j => Math.round(Math.random())))
+  return randomGrid
+}
 
 
 export const thermiteSlice = createSlice({
@@ -36,14 +42,19 @@ export const thermiteSlice = createSlice({
     startGrid: (state) => {
       console.log('yes')
       state.status = 'starting'
+      state.grid = initializeGrid()
     },
     enableButtons: (state) => {
       console.log('yes')
       state.status = 'started'
     },
+    winThermiteBossFight: (state) => {
+
+    },
 
     calculateDamage: (state) => {
-      
+      state.bossHP -=  ((state.grid.flatMap(i => i).filter(i => i === 2).length * 4) - (state.grid.flatMap(i => i).filter(i => i === 3).length * 2))
+
       state.status = 'finished'
     },
 
@@ -54,13 +65,14 @@ export const thermiteSlice = createSlice({
   },
 });
 
-export const { increment,incrementByAmount, startGrid, triggerThermite, enableButtons, calculateDamage } = thermiteSlice.actions;
+export const { increment,incrementByAmount, startGrid, triggerThermite, enableButtons, calculateDamage, winThermiteBossFight } = thermiteSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectGrid = (state: RootState) => state.thermite.grid;
 export const selectStatus = (state: RootState) => state.thermite.status;
+export const selectBossHP = (state: RootState) => state.thermite.bossHP;
 
 
 export default thermiteSlice.reducer;

@@ -2,9 +2,9 @@
 const pd = require('probability-distributions');
 
 export interface CYOAOption {
-    description?: String;
-    title?: String;
-    action?: String;
+    description?: string;
+    title?: string;
+    action?: string;
     image?: String;
     cost: Cost;
     destination: Room;
@@ -45,7 +45,7 @@ export interface Spell {
 
 
 export type GSResourceName = "red" | "blue" | "green" | "hp";
-export type GameStatus = "ready" | "started" | "victory" | "bossFight" | "gameOver";
+export type GameStatus = "ready" | "started" | "victory" | "tgBossFight" | "thermiteBossFight" | "gameOver" ;
 export type StructureStatus = "burnt" | "frozen" | "flourishing";
 
 

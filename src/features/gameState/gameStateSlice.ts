@@ -27,7 +27,9 @@ import {
 } from './Types'
 import { initializeTier1, Item, } from './Items'
 import { caveRoom, getRoomInteractions, getDoorInteractions } from './Quest'
-
+import {
+  winThermiteBossFight,
+} from '../thermite_bossfight/thermiteSlice';
 
 
 let GreenUpgrade: [Cost, boolean, boolean, GreenFnParams, Spell[]]
@@ -217,8 +219,13 @@ export const gameStateSlice = createSlice({
         state.status = 'victory'
       }
     },
-    startBossFight: (state) => {
-      state.status = 'bossFight'
+    startTempleGuardianBossFight: (state) => {
+      state.status = 'tgBossFight'
+      clearInterval(state.gameLoopInterval)
+      state.gameLoopInterval = NaN
+    },
+    startThermiteBossFight: (state) => {
+      state.status = 'thermiteBossFight'
       clearInterval(state.gameLoopInterval)
       state.gameLoopInterval = NaN
     },
@@ -348,6 +355,14 @@ export const gameStateSlice = createSlice({
 
   },
 
+  extraReducers: (builder) => {
+    builder
+      .addCase(winThermiteBossFight, (state) => {
+        state.status = 'victory'
+      })
+    }
+  
+
 });
 
 function handleSpell(state: Draft<GameState>, spell: Spell) {
@@ -357,7 +372,7 @@ function handleSpell(state: Draft<GameState>, spell: Spell) {
   let doorResults = state.room.options.map(x => getDoorInteractions(x.destination.name)(state, spell))
 }
 
-export const { incrementRed, incrementBossHP, resetState, startBossFight, startLoop, boulderKill, attackBoss, bossAttack, addCombatLogMessages, clearCombatLogMessages, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
+export const { incrementRed, incrementBossHP, resetState, startTempleGuardianBossFight, startThermiteBossFight, startLoop, boulderKill, attackBoss, bossAttack, addCombatLogMessages, clearCombatLogMessages, incrementGreen, incrementBlue, setGameLoopIntervals, clearGameLoopIntervals, incrementHP, castSpell, resetSpell, buyItem, stepQuest, upgrade } = gameStateSlice.actions;
 
 
 export const selectRed = (state: RootState) => state.gameState.resources.red;
