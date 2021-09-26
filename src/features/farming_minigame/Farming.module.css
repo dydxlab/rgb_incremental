@@ -230,3 +230,7 @@ button.redActive {
   margin-right: 8px;
 
 }
+
+button.optimal {
+  border: 4px solid rgb(255, 240, 25);
+}

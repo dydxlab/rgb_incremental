@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 import { stat } from 'fs';
 import { RootState, AppThunk } from '../../app/store';
 
@@ -30,25 +30,58 @@ function initializeGrid(){
   let randomGrid = [...Array(n).keys()].map(i => [...Array(n).keys()].map(j => getRandomIntInclusive(1,3)))
   return randomGrid
 }
+export interface BruteforceSolution {
+  coords: Array<Array<number>>;
+  maxScore: number;
+}
 
-function bruteForce(grid){
+interface gridParams {
+  gridLength: number;
+  coordChoices: Array<Array<number>>;
+  choiceCount: number;
+  grid?: Array<Array<number>>
+}
+
+let threeByThreeGrid: gridParams = {
+  gridLength: 3,
+  choiceCount: 3,
+  coordChoices: [[0,0], [0,1], [0,2], [1,0],[2,0],[1,1], [2,1],[1,2],[2,2]]
+}
+let fourByFourGrid: gridParams = {
+  gridLength: 4,
+  choiceCount: 4,
+  coordChoices: [[0,0], [0,1], [0,2], [0,3], [1,0],[2,0], [3,0], [1,1], [2,1], [3,1], [1,2],[2,2], [3,2], [3,3],]
+}
+
+function bruteForce(grid): BruteforceSolution{
   let coordChoices = {1: [0,0], 2: [0,1], 3: [0,2], 4: [1,0], 5:[2,0], 6:[1,1], 7:[2,1],8:[1,2], 9:[2,2]}
-  let curr = {}
+  let gridCopy1 = deactivateGrid(JSON.parse(JSON.stringify(current(grid))))
+  let curr: Array<BruteforceSolution> = []
   let scores = [0]
   for(let i = 1; i <= 9; i++){
     for(let j = i+1; j <= 9; j++){
       for(let k = j+1; k <= 9; k++){
-        let gridCopy = Object.assign(grid, {})
+        let gridCopy =JSON.parse(JSON.stringify(gridCopy1))
         activateGridCoords(gridCopy, coordChoices[i])
         activateGridCoords(gridCopy, coordChoices[j])
         activateGridCoords(gridCopy, coordChoices[k])
-        let score = calculateScore(grid)
-        curr[coordChoices[i] + ',' + coordChoices[j] + ',' + coordChoices[k]] = score
+        let score = calculateScore(gridCopy)
+        let coords1 = [coordChoices[i], coordChoices[j], coordChoices[k]]
+        curr.push({coords:coords1, maxScore:score})
         scores.push(score)
       }
     }
   }
-  return Math.max(...scores)
+  let maxCoord = [[0]]
+  let maxScore = 0
+  for(let x of curr){
+    if(x.maxScore > maxScore){
+      maxCoord = x.coords
+      maxScore = x.maxScore
+    }
+  }
+
+  return {coords: maxCoord, maxScore: maxScore}
 }
 
 function calculateScore(grid){
@@ -93,6 +126,20 @@ function activateGridCoords(grid, coords){
   return grid
 }
 
+function deactivateGrid(grid){
+  for(let i = 0; i < grid.length; i++){
+    for(let j = 0; j < grid[0].length; j++){
+      switch(grid[i][j]) {
+        case 4: grid[i][j] = 1; break;
+        case 5: grid[i][j] = 2; break;
+        case 6: grid[i][j] = 3; break;
+        default: break;
+      }
+    }
+  }
+  
+  return grid
+}
 
 export const farmingSlice = createSlice({
   name: 'farming',
@@ -112,7 +159,16 @@ export const farmingSlice = createSlice({
       if(state.grid.flatMap(x => x).filter(x => x >= 4 && x <=6).length === 3){
         state.status = 'finished'
         state.score = calculateScore(state.grid)
-        state.maxScore = bruteForce(state.grid)
+        let bruteForceSolution = bruteForce(state.grid)
+        state.maxScore = bruteForceSolution.maxScore
+        console.log('coords: ' + bruteForceSolution.coords)
+        if(state.score === state.maxScore){
+          state.grid = state.grid.map(x => x.map(y => y > 3 ? y + 6 : y))
+        } else {
+          state.grid[bruteForceSolution.coords[0][0]][bruteForceSolution.coords[0][1]] += 6
+          state.grid[bruteForceSolution.coords[1][0]][bruteForceSolution.coords[1][1]] += 6
+          state.grid[bruteForceSolution.coords[2][0]][bruteForceSolution.coords[2][1]] += 6
+        }
       }
       //state.value += 1;
     },

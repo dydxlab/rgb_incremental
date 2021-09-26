@@ -25,6 +25,20 @@ export function Farming() {
     if (status === 'idle') {
       return styles.button;
     }
+    if(cellValue > 6){
+      cellValue -= 6;
+      switch (cellValue) {
+        case 0: return styles.button + ' ' + styles.optimal;
+        case 1: return styles.greenInactive+ ' ' + styles.optimal;
+        case 2: return styles.blueInactive+ ' ' + styles.optimal;
+        case 3: return styles.redInactive+ ' ' + styles.optimal;
+        case 4: return styles.greenActive+ ' ' + styles.optimal;
+        case 5: return styles.blueActive+ ' ' + styles.optimal;
+        case 6: return styles.redActive+ ' ' + styles.optimal;
+        
+  
+      }
+    }
     switch (cellValue) {
       case 0: return styles.button;
       case 1: return styles.greenInactive;
@@ -33,6 +47,7 @@ export function Farming() {
       case 4: return styles.greenActive;
       case 5: return styles.blueActive;
       case 6: return styles.redActive;
+      
 
     }
   }
