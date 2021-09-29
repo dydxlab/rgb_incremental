@@ -2,75 +2,128 @@ import { createAsyncThunk, createSlice, PayloadAction, current } from '@reduxjs/
 import { stat } from 'fs';
 import { RootState, AppThunk } from '../../app/store';
 
+interface GridParams {
+  gridLength: number;
+  coordChoices: Array<Array<number>>;
+  choiceCount: number;
+  grid: Array<Array<number>>
+}
+
+interface AchievementStats {
+  perfectScores: number;
+  streak: number;
+}
+
+interface Achievement {
+  perfectScores?: number;
+  streak?: number;
+  title: string;
+  description: string;
+}
+
+let fiveStreak: Achievement = {streak: 5, title: "Five Win Streak", description: "Unprecedented success!"}
+let tenStreak: Achievement = {streak: 5, title: "Ten Win Streak", description: "Unprecedented success!"}
+let tenTotal: Achievement = {streak: 5, title: "Ten Wins!", description: "Unprecedented success!"}
+let hundredTotal: Achievement = {streak: 5, title: "One Hundred Wins", description: "Unprecedented success!"}
+
 export interface FarmingState {
-  grid: Array<Array<number>>;
+  grid: GridParams;
   status: 'idle' | 'starting' | 'started' | 'finished';
   score: number;
   maxScore: number;
+  maxScoreCoords: Array<Array<number>>;
   enabled: boolean;
+  achievementStats: AchievementStats;
+  achievements: Array<Achievement>;
+  freshAchievements: Array<Achievement>;
+}
+
+
+
+let threeByThreeGrid: GridParams = {
+  gridLength: 3,
+  choiceCount: 3,
+  coordChoices: [[0,0], [0,1], [0,2], [1,0],[2,0],[1,1], [2,1],[1,2],[2,2]],
+  grid: [[0]]
+}
+let fourByFourGrid: GridParams = {
+  gridLength: 4,
+  choiceCount: 4,
+  coordChoices: [[0,0], [0,1], [0,2], [0,3], [1,0],[2,0], [3,0], [1,1], [2,1], [3,1], [1,2],[2,2], [3,2], [1,3], [2,3], [3,3],],
+  grid: [[0]]
+}
+let fiveByFiveGrid: GridParams = {
+  gridLength: 5,
+  choiceCount: 5,
+  coordChoices: [[0,0], [0,1], [0,2], [0,3], [0,4], [1,0],[2,0], [3,0], [4,0], [1,1], [2,1], [3,1], [4,1], [1,2],[2,2], [3,2], [4,2], [1,3], [2,3], [3,3], [1,4], [2,4], [3,4], [4,3], [4,4],],
+  grid: [[0]]
+}
+
+let allParams = {
+  3: threeByThreeGrid,
+  4: fourByFourGrid,
+  5: fiveByFiveGrid
 }
 
 const initialState: FarmingState = {
   //grid: [[0, 0], [1, 0]],
-  grid: initializeGrid(),
+  grid: initializeGrid(fiveByFiveGrid),
   status: 'idle',
   score: 0,
   maxScore: 20,
-  enabled: false
+  maxScoreCoords: [[0]],
+  enabled: false,
+  achievementStats: {perfectScores: 0, streak: 0},
+  achievements: new Array<Achievement>(),
+  freshAchievements: new Array<Achievement>()
 };
 
-function getRandomIntInclusive(min, max) {
+function getRandomIntInclusive(min:number, max:number) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
 
-function initializeGrid(){
-  let n = 3
+function emptyGrid(gridParams: GridParams): GridParams{
+  let n = gridParams.gridLength
+  let randomGrid = [...Array(n).keys()].map(i => [...Array(n).keys()].map(j => 0))
+  gridParams.grid = randomGrid
+  return gridParams
+}
+
+function initializeGrid(gridParams: GridParams): GridParams{
+  let n = gridParams.gridLength
   let randomGrid = [...Array(n).keys()].map(i => [...Array(n).keys()].map(j => getRandomIntInclusive(1,3)))
-  return randomGrid
+  gridParams.grid = randomGrid
+  return gridParams
 }
 export interface BruteforceSolution {
   coords: Array<Array<number>>;
   maxScore: number;
 }
 
-interface gridParams {
-  gridLength: number;
-  coordChoices: Array<Array<number>>;
-  choiceCount: number;
-  grid?: Array<Array<number>>
+
+function choose(arr, k, prefix: Array<number> =[]) {
+  if (k == 0) return [prefix];
+  return arr.flatMap((v, i) =>
+      choose(arr.slice(i+1), k-1, [...prefix, v])
+  );
 }
 
-let threeByThreeGrid: gridParams = {
-  gridLength: 3,
-  choiceCount: 3,
-  coordChoices: [[0,0], [0,1], [0,2], [1,0],[2,0],[1,1], [2,1],[1,2],[2,2]]
-}
-let fourByFourGrid: gridParams = {
-  gridLength: 4,
-  choiceCount: 4,
-  coordChoices: [[0,0], [0,1], [0,2], [0,3], [1,0],[2,0], [3,0], [1,1], [2,1], [3,1], [1,2],[2,2], [3,2], [3,3],]
-}
 
-function bruteForce(grid): BruteforceSolution{
-  let coordChoices = {1: [0,0], 2: [0,1], 3: [0,2], 4: [1,0], 5:[2,0], 6:[1,1], 7:[2,1],8:[1,2], 9:[2,2]}
-  let gridCopy1 = deactivateGrid(JSON.parse(JSON.stringify(current(grid))))
+
+function bruteForce(grid: GridParams): BruteforceSolution{
+  //let coordChoices = {1: [0,0], 2: [0,1], 3: [0,2], 4: [1,0], 5:[2,0], 6:[1,1], 7:[2,1],8:[1,2], 9:[2,2]}
+  let coordChoices = grid.coordChoices
+  let gridCopy1 = deactivateGrid(JSON.parse(JSON.stringify(grid.grid)))
   let curr: Array<BruteforceSolution> = []
-  let scores = [0]
-  for(let i = 1; i <= 9; i++){
-    for(let j = i+1; j <= 9; j++){
-      for(let k = j+1; k <= 9; k++){
-        let gridCopy =JSON.parse(JSON.stringify(gridCopy1))
-        activateGridCoords(gridCopy, coordChoices[i])
-        activateGridCoords(gridCopy, coordChoices[j])
-        activateGridCoords(gridCopy, coordChoices[k])
-        let score = calculateScore(gridCopy)
-        let coords1 = [coordChoices[i], coordChoices[j], coordChoices[k]]
-        curr.push({coords:coords1, maxScore:score})
-        scores.push(score)
-      }
-    }
+  let choices = choose([...Array(grid.coordChoices.length).keys()], grid.choiceCount)
+  for (const choice of choices){
+    let gridCopy =JSON.parse(JSON.stringify(gridCopy1))
+    choice.flatMap(x => activateGridCoords(gridCopy, coordChoices[x]))
+    let score = calculateScore(gridCopy)
+    let coords1 = choice.map(x => coordChoices[x])
+    curr.push({coords:coords1, maxScore:score})
   }
   let maxCoord = [[0]]
   let maxScore = 0
@@ -84,7 +137,7 @@ function bruteForce(grid): BruteforceSolution{
   return {coords: maxCoord, maxScore: maxScore}
 }
 
-function calculateScore(grid){
+function calculateScore(grid: Array<Array<number>>){
   let score = 0;
   let baseScores = {4: 3, 5: 2, 6: 1}
 
@@ -146,36 +199,44 @@ export const farmingSlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    increment: (state) => {
 
-      //state.value += 1;
-    },
     activateCell: (state, action) => {
       let coords = action.payload;
       console.log(coords)
       //let coords = [0,2]
-      state.grid = activateGridCoords(state.grid, coords)
+      state.grid.grid = activateGridCoords(state.grid.grid, coords)
       console.log('test')
-      if(state.grid.flatMap(x => x).filter(x => x >= 4 && x <=6).length === 3){
+      if(state.grid.grid.flatMap(x => x).filter(x => x >= 4 && x <=6).length === state.grid.choiceCount){
         state.status = 'finished'
-        state.score = calculateScore(state.grid)
-        let bruteForceSolution = bruteForce(state.grid)
-        state.maxScore = bruteForceSolution.maxScore
-        console.log('coords: ' + bruteForceSolution.coords)
+        state.score = calculateScore(state.grid.grid)
         if(state.score === state.maxScore){
-          state.grid = state.grid.map(x => x.map(y => y > 3 ? y + 6 : y))
+          state.grid.grid = state.grid.grid.map(x => x.map(y => y > 3 ? y + 6 : y))
+          state.achievementStats.perfectScores += 1
+          state.achievementStats.streak += 1
+          
         } else {
-          state.grid[bruteForceSolution.coords[0][0]][bruteForceSolution.coords[0][1]] += 6
-          state.grid[bruteForceSolution.coords[1][0]][bruteForceSolution.coords[1][1]] += 6
-          state.grid[bruteForceSolution.coords[2][0]][bruteForceSolution.coords[2][1]] += 6
+          for(const coord of current(state.maxScoreCoords)){
+            console.log(coord)
+            console.log(current(state.grid))
+            console.log(current(state.maxScoreCoords))
+            state.grid.grid[coord[0]][coord[1]] += 6
+          }
+          state.achievementStats.streak = 0
         }
+        
+
       }
       //state.value += 1;
     },
+    setGridSize: (state, action) => {
+      state.grid = emptyGrid(JSON.parse(JSON.stringify(allParams[action.payload])))
+    },
     startGrid: (state) => {
-      console.log('yes')
       state.status = 'starting'
-      state.grid = initializeGrid()
+      state.grid = initializeGrid(state.grid)
+      let bruteForceSolution = bruteForce(state.grid)
+      state.maxScore = bruteForceSolution.maxScore
+      state.maxScoreCoords = bruteForceSolution.coords
     },
     enableButtons: (state) => {
       console.log('yes')
@@ -185,12 +246,13 @@ export const farmingSlice = createSlice({
   },
 });
 
-export const {startGrid, activateCell, enableButtons, } = farmingSlice.actions;
+export const {startGrid, activateCell, enableButtons, setGridSize } = farmingSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectGrid = (state: RootState) => state.farming.grid
+export const selectGrid = (state: RootState) => state.farming.grid.grid;
+export const selectGridSize = (state: RootState) => state.farming.grid.gridLength;
 export const selectStatus = (state: RootState) => state.farming.status;
 export const selectScore = (state: RootState) => state.farming.score;
 export const selectMaxScore = (state: RootState) => state.farming.maxScore;
