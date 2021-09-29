@@ -37,7 +37,26 @@ export function Farming() {
   const finishRoundAudio = new Audio("./finish_round.wav")
 
 
+  function getButtonIcon(cellValue, enabledButtons) {
+    if (status === 'idle') {
+      return ('O');
+    }
+    if (cellValue > 6) {
+      cellValue -= 6;
+    }
+    
+    switch (cellValue) {
+      case 0: return ('O');
+      case 1: return (<img src="./mushroom_green.svg" style={{'height': '32px', 'width': '32px'}}></img>);
+      case 2: return (<img src="./mushroom_blue.svg" style={{'height': '32px', 'width': '32px'}}></img>);
+      case 3: return (<img src="./mushroom_red.svg" style={{'height': '32px', 'width': '32px'}}></img>);
+      case 4: return (<img src="./mushroom_green.svg" style={{'height': '32px', 'width': '32px'}}></img>);
+      case 5: return (<img src="./mushroom_blue.svg" style={{'height': '32px', 'width': '32px'}}></img>);
+      case 6: return (<img src="./mushroom_red.svg" style={{'height': '32px', 'width': '32px'}}></img>);
 
+
+    }
+  }
 
 
   function getButtonStyle(cellValue, enabledButtons) {
