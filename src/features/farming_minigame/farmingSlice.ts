@@ -6,7 +6,8 @@ interface GridParams {
   gridLength: number;
   coordChoices: Array<Array<number>>;
   choiceCount: number;
-  grid: Array<Array<number>>
+  grid: Array<Array<number>>;
+  gridChoices: Array<Array<number>>;
 }
 
 interface AchievementStats {
@@ -44,19 +45,22 @@ let threeByThreeGrid: GridParams = {
   gridLength: 3,
   choiceCount: 3,
   coordChoices: [[0,0], [0,1], [0,2], [1,0],[2,0],[1,1], [2,1],[1,2],[2,2]],
-  grid: [[0]]
+  grid: [[0]],
+  gridChoices: choose([...Array([[0,0], [0,1], [0,2], [1,0],[2,0],[1,1], [2,1],[1,2],[2,2]].length).keys()], 3)
 }
 let fourByFourGrid: GridParams = {
   gridLength: 4,
   choiceCount: 4,
   coordChoices: [[0,0], [0,1], [0,2], [0,3], [1,0],[2,0], [3,0], [1,1], [2,1], [3,1], [1,2],[2,2], [3,2], [1,3], [2,3], [3,3],],
-  grid: [[0]]
+  grid: [[0]],
+  gridChoices: choose([...Array([[0,0], [0,1], [0,2], [0,3], [1,0],[2,0], [3,0], [1,1], [2,1], [3,1], [1,2],[2,2], [3,2], [1,3], [2,3], [3,3],].length).keys()], 4)
 }
 let fiveByFiveGrid: GridParams = {
   gridLength: 5,
   choiceCount: 5,
   coordChoices: [[0,0], [0,1], [0,2], [0,3], [0,4], [1,0],[2,0], [3,0], [4,0], [1,1], [2,1], [3,1], [4,1], [1,2],[2,2], [3,2], [4,2], [1,3], [2,3], [3,3], [1,4], [2,4], [3,4], [4,3], [4,4],],
-  grid: [[0]]
+  grid: [[0]],
+  gridChoices: choose([...Array([[0,0], [0,1], [0,2], [0,3], [0,4], [1,0],[2,0], [3,0], [4,0], [1,1], [2,1], [3,1], [4,1], [1,2],[2,2], [3,2], [4,2], [1,3], [2,3], [3,3], [1,4], [2,4], [3,4], [4,3], [4,4],].length).keys()], 5)
 }
 
 let allParams = {
@@ -117,20 +121,18 @@ function bruteForce(grid: GridParams): BruteforceSolution{
   let coordChoices = grid.coordChoices
   let gridCopy1 = deactivateGrid(JSON.parse(JSON.stringify(grid.grid)))
   let curr: Array<BruteforceSolution> = []
-  let choices = choose([...Array(grid.coordChoices.length).keys()], grid.choiceCount)
+  let choices = grid.gridChoices
+  let maxCoord = [[0]]
+  let maxScore = 0
   for (const choice of choices){
-    let gridCopy =JSON.parse(JSON.stringify(gridCopy1))
+    let gridCopy = deactivateGrid(gridCopy1)
     choice.flatMap(x => activateGridCoords(gridCopy, coordChoices[x]))
     let score = calculateScore(gridCopy)
     let coords1 = choice.map(x => coordChoices[x])
     curr.push({coords:coords1, maxScore:score})
-  }
-  let maxCoord = [[0]]
-  let maxScore = 0
-  for(let x of curr){
-    if(x.maxScore > maxScore){
-      maxCoord = x.coords
-      maxScore = x.maxScore
+    if(score > maxScore){
+      maxCoord = coords1
+      maxScore = score
     }
   }
 
@@ -139,23 +141,22 @@ function bruteForce(grid: GridParams): BruteforceSolution{
 
 function calculateScore(grid: Array<Array<number>>){
   let score = 0;
-  let baseScores = {4: 3, 5: 2, 6: 1}
-
+  let baseScores = {4: 3, 5: 0, 6: 0}
 
   for(let i = 0; i < grid.length; i++){
     for(let j = 0; j < grid[0].length; j++){
-      let base = baseScores[grid[i][j]] || 0
-      if(base === 0){
+      let base = baseScores[grid[i][j]] ?? -1
+      if(base === -1){
         continue;
       }
       if((i - 1 >= 0 && grid[i - 1][j] === 5) || (i + 1 < grid.length && grid[i + 1][j] === 5)){
-        base = base + 1
+        base = base + 3
       }
       if((i - 1 >= 0 && j - 1 >= 0 && grid[i - 1][j- 1] === 6 )  
       || (i - 1 >= 0 && j + 1 <= grid[0].length && grid[i - 1][j + 1] === 6 )  
       || (i + 1 < grid.length && j - 1 >= 0 && grid[i + 1][j - 1] === 6 )  
       || (i + 1 < grid.length && j + 1 < grid[0].length && grid[i + 1][j + 1] === 6)){
-        base = base + 1
+        base = base + 2
       }
       if((j - 1 >= 0 && grid[i][j - 1] === 4) || (j + 1 < grid[0].length && grid[i][j + 1] === 4)){
         base = 0
