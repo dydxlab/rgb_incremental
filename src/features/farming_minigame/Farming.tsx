@@ -10,9 +10,14 @@ import {
   selectStatus,
   startGrid,
   selectScore,
-  selectMaxScore
+  selectMaxScore,
+  activeCellStatuses,
+  CellStatus,
+  selectFreshAchievements
 } from './farmingSlice';
 import styles from './Farming.module.css';
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Farming() {
   const grid = useAppSelector(selectGrid);
@@ -20,6 +25,8 @@ export function Farming() {
   const score = useAppSelector(selectScore);
   const maxScore = useAppSelector(selectMaxScore);
   const status = useAppSelector(selectStatus);
+  const freshAchievements = useAppSelector(selectFreshAchievements);
+
   const dispatch = useAppDispatch();
   const audio = new Audio("./MushroomBluegrass.mp3")
   audio.addEventListener('ended', function () {
@@ -37,26 +44,6 @@ export function Farming() {
   const finishRoundAudio = new Audio("./finish_round.wav")
 
 
-  function getButtonIcon(cellValue, enabledButtons) {
-    if (status === 'idle') {
-      return ('O');
-    }
-    if (cellValue > 6) {
-      cellValue -= 6;
-    }
-    
-    switch (cellValue) {
-      case 0: return ('O');
-      case 1: return (<img src="./mushroom_green.svg" style={{'height': '32px', 'width': '32px'}}></img>);
-      case 2: return (<img src="./mushroom_blue.svg" style={{'height': '32px', 'width': '32px'}}></img>);
-      case 3: return (<img src="./mushroom_red.svg" style={{'height': '32px', 'width': '32px'}}></img>);
-      case 4: return (<img src="./mushroom_green.svg" style={{'height': '32px', 'width': '32px'}}></img>);
-      case 5: return (<img src="./mushroom_blue.svg" style={{'height': '32px', 'width': '32px'}}></img>);
-      case 6: return (<img src="./mushroom_red.svg" style={{'height': '32px', 'width': '32px'}}></img>);
-
-
-    }
-  }
 
 
   function getButtonStyle(cellValue, enabledButtons) {
@@ -90,26 +77,71 @@ export function Farming() {
     }
   }
 
+
+  function getButtonStyleCellStatus(cellValue: CellStatus, enabledButtons) {
+    if (status === 'idle') {
+      return styles.button;
+    }
+
+    switch (cellValue) {
+      case 'GreenActive': return styles.greenActive;
+      case 'GreenInactive': return styles.greenInactive;
+      case 'RedActive': return styles.redActive;
+      case 'RedInactive': return styles.redInactive;
+      case 'BlueActive': return styles.blueActive;
+      case 'BlueInactive': return styles.blueInactive;
+
+      case 'GreenActiveHighlighted': return styles.greenActive + ' ' + styles.optimal;
+      case 'GreenInactiveHighlighted': return styles.greenInactive + ' ' + styles.optimal;
+      case 'RedActiveHighlighted': return styles.redActive + ' ' + styles.optimal;
+      case 'RedInactiveHighlighted': return styles.redInactive + ' ' + styles.optimal;
+      case 'BlueActiveHighlighted': return styles.blueActive + ' ' + styles.optimal;
+      case 'BlueInactiveHighlighted': return styles.blueInactive + ' ' + styles.optimal;
+
+      case 'Neutral': return styles.button;
+      default: return styles.button;
+
+    }
+  }
+
   function runLoop() {
     console.log('loop')
-    if(audio.paused){
+    if (audio.paused) {
       audio.volume = 0.2;
       audio.play();
     }
     setTimeout(() => dispatch(startGrid()), 100);
     setTimeout(() => dispatch(enableButtons()), 100);
-    
+
   }
 
   function clickCell(coord) {
-    if(grid[coord[0]][coord[1]] > 3){
+    if (activeCellStatuses.includes(grid[coord[0]][coord[1]])) {
       deactivateCellAudio.play();
     } else {
       activateCellAudio.play();
     }
-    
+
     dispatch(activateCell(coord))
   }
+
+  function notify() {
+    if (freshAchievements && freshAchievements.length) {
+      freshAchievements.flatMap(a => 
+      toast.success(a.title, {
+        position: "top-center",
+        autoClose: 7000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        toastId: a.title
+      })
+      )
+    }
+  }
+
 
   function getBoard() {
     switch (status) {
@@ -125,7 +157,7 @@ export function Farming() {
         {grid && grid.map((row, i) => {
           return (<div className={styles.row}>
             {row.map((cell, j) =>
-            (<button disabled={true} className={getButtonStyle(cell, status)}
+            (<button disabled={true} className={getButtonStyleCellStatus(cell, status)}
 
 
             >O</button>)
@@ -147,7 +179,7 @@ export function Farming() {
           {grid && grid.map((row, i) => {
             return (<div className={styles.row}>
               {row.map((cell, j) =>
-              (<button disabled={status === 'finished'} className={getButtonStyle(cell, status)}
+              (<button disabled={status === 'finished'} className={getButtonStyleCellStatus(cell, status)}
                 onClick={() => clickCell([i, j])}
 
               >O</button>)
@@ -166,37 +198,49 @@ export function Farming() {
     }
   }
 
-  {status === 'finished' && score > 0 && score === maxScore && perfectScoreAudio.play()}
-  {status === 'finished' && score > 0 && score !== maxScore && finishRoundAudio.play()}
+  { status === 'finished' && score > 0 && score === maxScore && perfectScoreAudio.play() }
+  { status === 'finished' && score > 0 && score !== maxScore && finishRoundAudio.play() }
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        transition={Slide}
+      />
       <h3 style={{ 'color': 'rgb(222, 222, 222)' }}>Mushroom Minigame</h3>
-      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Red mushrooms give 1 point and add 1 point to active diagonal mushrooms</span><br />
-      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Green mushrooms give 3 point and set active mushrooms to the left and right to 0 points</span><br />
-      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Blue mushrooms give 2 points and add 1 point to active mushrooms above and below them</span><br />
+      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Red mushrooms give 1 point and add 2 points to active diagonal mushrooms</span><br />
+      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Green mushrooms give 4 point and set active mushrooms to the left and right to 0 points</span><br />
+      <span style={{ 'color': 'rgb(222, 222, 222)' }}>Blue mushrooms give 0 points and add 3 points to active mushrooms above and below them</span><br />
       <br />
       {getBoard()}
       {status === 'finished' && (<div><span style={{ 'color': 'rgb(255, 255, 255)' }}>Your Score:{score}</span>
         <br />
         <span style={{ 'color': 'rgb(255, 255, 255)' }}>Max Possible Score:{maxScore}</span>
-        
+
         <div className={styles.row}>
-        <label style={{ 'color': 'rgb(255, 255, 255)',  'paddingRight':'12px' }}>
-          <input type="radio" name="gridsize3x3"
-            value={3}
-            checked={gridSize === 3}
-            onChange={() => dispatch(setGridSize(3))} /> 3X3</label>
-          <label style={{ 'color': 'rgb(255, 255, 255)' ,  'paddingRight':'12px'}}>
-          <input type="radio" name="gridsize4x4"
-            value={4}
-            checked={gridSize === 4}
-            onChange={() => dispatch(setGridSize(4))} />4X4</label>
-          
-          <label style={{ 'color': 'rgb(255, 255, 255)', 'paddingRight':'12px' }}>
-          <input type="radio" name="gridsize5x5"
-            value={5}
-            checked={gridSize === 5}
-            onChange={() => dispatch(setGridSize(5))} />5X5</label>
+          <label style={{ 'color': 'rgb(255, 255, 255)', 'paddingRight': '12px' }}>
+            <input type="radio" name="gridsize3x3"
+              value={3}
+              checked={gridSize === 3}
+              onChange={() => dispatch(setGridSize(3))} /> 3X3</label>
+          <label style={{ 'color': 'rgb(255, 255, 255)', 'paddingRight': '12px' }}>
+            <input type="radio" name="gridsize4x4"
+              value={4}
+              checked={gridSize === 4}
+              onChange={() => dispatch(setGridSize(4))} />4X4</label>
+
+          <label style={{ 'color': 'rgb(255, 255, 255)', 'paddingRight': '12px' }}>
+            <input type="radio" name="gridsize5x5"
+              value={5}
+              checked={gridSize === 5}
+              onChange={() => dispatch(setGridSize(5))} />5X5</label>
           <button className={styles.button}
             style={{ 'backgroundColor': 'goldenrod', color: 'white' }}
             onClick={runLoop
@@ -206,6 +250,7 @@ export function Farming() {
         </div>
       </div>)
       }
+      {status === 'finished' && notify()}
     </div>
   );
 }

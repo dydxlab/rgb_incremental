@@ -6,10 +6,14 @@ import gameStateReducer from '../features/gameState/gameStateSlice';
 import thermiteReducer from '../features/thermite_bossfight/thermiteSlice';
 import farmingReducer from '../features/farming_minigame/farmingSlice';
 
+const currentVersion = '0.1'
 
-const persistedState = localStorage.getItem('reduxState') 
+let persistedState = localStorage.getItem('reduxState') 
                        ? JSON.parse(localStorage.getItem('reduxState') || '{}')
                        : {}
+if(persistedState && persistedState.farming && persistedState.farming.version !== currentVersion){
+  persistedState = {}
+}
 if(persistedState && persistedState.gameState && persistedState.gameState.status && persistedState.gameState.status === 'started'){
    persistedState.gameState.status = 'ready'
 }
