@@ -6,7 +6,7 @@ import gameStateReducer from '../features/gameState/gameStateSlice';
 import thermiteReducer from '../features/thermite_bossfight/thermiteSlice';
 import farmingReducer from '../features/farming_minigame/farmingSlice';
 
-const currentVersion = '0.1'
+const currentVersion = '0.1.1'
 
 let persistedState = localStorage.getItem('reduxState') 
                        ? JSON.parse(localStorage.getItem('reduxState') || '{}')

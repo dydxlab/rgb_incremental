@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, FunctionComponent } from 'react';
+import ReactDOM from 'react-dom'
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
@@ -19,7 +20,11 @@ import styles from './Farming.module.css';
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export function Farming() {
+interface FarmingProps {
+  id: string;
+}
+
+export const Farming: FunctionComponent = () => {
   const grid = useAppSelector(selectGrid);
   const gridSize = useAppSelector(selectGridSize);
   const score = useAppSelector(selectScore);
@@ -28,19 +33,18 @@ export function Farming() {
   const freshAchievements = useAppSelector(selectFreshAchievements);
 
   const dispatch = useAppDispatch();
-  const audio = new Audio("./MushroomBluegrass.mp3")
-  audio.addEventListener('ended', function () {
-    this.currentTime = 0;
-    this.play();
-  }, false);
+
 
   const activateCellAudio = new Audio("./activate_cell3.wav")
   activateCellAudio.volume = 0.3
 
+  
   const deactivateCellAudio = new Audio("./deactivate_cell.wav")
   deactivateCellAudio.volume = 0.3
 
   const perfectScoreAudio = new Audio("./perfect_score.wav")
+  const achievementAudio = new Audio("./achievement_unlocked2.wav")
+  achievementAudio.volume = 0.05
   const finishRoundAudio = new Audio("./finish_round.wav")
 
 
@@ -105,11 +109,6 @@ export function Farming() {
   }
 
   function runLoop() {
-    console.log('loop')
-    if (audio.paused) {
-      audio.volume = 0.2;
-      audio.play();
-    }
     setTimeout(() => dispatch(startGrid()), 100);
     setTimeout(() => dispatch(enableButtons()), 100);
 
@@ -140,6 +139,17 @@ export function Farming() {
       })
       )
     }
+  }
+
+  function playEndRoundAudio(){
+    if(score === maxScore && freshAchievements.length){
+      achievementAudio.play()
+    } else if(score === maxScore && !freshAchievements.length){
+      perfectScoreAudio.play()
+    } else if(score !== maxScore){
+      finishRoundAudio.play()
+    }
+    
   }
 
 
@@ -198,8 +208,7 @@ export function Farming() {
     }
   }
 
-  { status === 'finished' && score > 0 && score === maxScore && perfectScoreAudio.play() }
-  { status === 'finished' && score > 0 && score !== maxScore && finishRoundAudio.play() }
+  { status === 'finished' && score > 0 && playEndRoundAudio()  }
   return (
     <div>
       <ToastContainer

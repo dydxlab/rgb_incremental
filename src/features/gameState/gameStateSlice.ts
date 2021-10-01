@@ -261,7 +261,6 @@ export const gameStateSlice = createSlice({
       state.gameLoopInterval = 0;
     },
     addCombatLogMessages: (state, action) => {
-      console.log('unshift');
       state.combatLogMessages.unshift(action.payload)
     },
     clearCombatLogMessages: (state) => {

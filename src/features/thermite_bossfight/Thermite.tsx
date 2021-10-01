@@ -34,7 +34,6 @@ export function Thermite() {
   }
 
   function runLoop() {
-    console.log('loop')
     if(bossHP <= 0){ 
       dispatch(winThermiteBossFight())
       return
@@ -104,7 +103,7 @@ export function Thermite() {
   return (
     <div>
       <h2 style={{ 'color': 'rgb(255, 255, 255)' }}>Volcano Boss</h2>
-      <img src='./flying_dragon.gif' className="App-logo" style={{height:'192px', width:'192px'}}alt="logo" />
+      <img src='./flying_dragon.gif' className="App-logo" style={{height:'192px', width:'192rpx'}}alt="logo" />
       <br></br>
       <svg xmlns="http://www.w3.org/2000/svg" width="350" height="50">
         <g>

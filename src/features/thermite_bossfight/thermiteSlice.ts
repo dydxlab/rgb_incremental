@@ -34,18 +34,15 @@ export const thermiteSlice = createSlice({
     },
     triggerThermite: (state, action) => {
       let coords = action.payload;
-      console.log(coords)
       //let coords = [0,2]
       state.grid[coords[0]][coords[1]]  = state.grid[coords[0]][coords[1]] === 1 ? 2 : 3
       //state.value += 1;
     },
     startGrid: (state) => {
-      console.log('yes')
       state.status = 'starting'
       state.grid = initializeGrid()
     },
     enableButtons: (state) => {
-      console.log('yes')
       state.status = 'started'
     },
     winThermiteBossFight: (state) => {

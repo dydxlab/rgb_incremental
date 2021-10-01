@@ -79,7 +79,7 @@ let allParams = {
 
 const initialState: FarmingState = {
   //grid: [[0, 0], [1, 0]],
-  grid: initializeGrid(threeByThreeGrid),
+  grid: initializeGrid(threeByThreeGrid, false),
   status: 'idle',
   score: 0,
   maxScore: 20,
@@ -104,11 +104,13 @@ function emptyGrid(gridParams: GridParams): GridParams {
   return gridParams
 }
 
-function initializeGrid(gridParams: GridParams): GridParams {
+function initializeGrid(gridParams: GridParams, showGolden: boolean): GridParams {
   let n = gridParams.gridLength
   let lookup = {1: 'GreenInactive', 2: 'BlueInactive', 3:'RedInactive'}
-  let randomGrid = [...Array(n).keys()].map(i => [...Array(n).keys()].map(j => lookup[getRandomIntInclusive(1, 3)]))
-  gridParams.grid = randomGrid
+  gridParams.grid = [...Array(n).keys()].map(i => [...Array(n).keys()].map(j => lookup[getRandomIntInclusive(1, 3)]))
+  if(showGolden && Math.random() >0.99) {
+    gridParams.grid[getRandomIntInclusive(0, gridParams.gridLength - 1)][getRandomIntInclusive(0, gridParams.gridLength - 1)] = 'GoldInactive'
+  }
   return gridParams
 }
 export interface BruteforceSolution {
@@ -248,10 +250,8 @@ export const farmingSlice = createSlice({
     activateCell: (state, action) => {
       state.freshAchievements = []
       let coords = action.payload;
-      console.log(coords)
       //let coords = [0,2]
       state.grid.grid = activateGridCoords(state.grid.grid, coords)
-      console.log('test')
       if (state.grid.grid.flatMap(x => x).filter(x => activeCellStatuses.includes(x)).length === state.grid.choiceCount) {
         state.status = 'finished'
         state.score = calculateScore(state.grid.grid)
@@ -267,9 +267,6 @@ export const farmingSlice = createSlice({
 
         } else {
           for (const coord of current(state.maxScoreCoords)) {
-            console.log(coord)
-            console.log(current(state.grid))
-            console.log(current(state.maxScoreCoords))
             state.grid.grid[coord[0]][coord[1]] = highlightCellStatus(state.grid.grid[coord[0]][coord[1]])
           }
           state.achievementStats.streak = 0
@@ -284,13 +281,12 @@ export const farmingSlice = createSlice({
     },
     startGrid: (state) => {
       state.status = 'starting'
-      state.grid = initializeGrid(state.grid)
+      state.grid = initializeGrid(state.grid,state.achievementStats.perfectScores > 0)
       let bruteForceSolution = bruteForce(state.grid)
       state.maxScore = bruteForceSolution.maxScore
       state.maxScoreCoords = bruteForceSolution.coords
     },
     enableButtons: (state) => {
-      console.log('yes')
       state.status = 'started'
     },
 

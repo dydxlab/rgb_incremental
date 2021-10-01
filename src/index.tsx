@@ -6,7 +6,14 @@ import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
-
+const backgroundAudio = new Audio("./MushroomBluegrass.mp3")
+  backgroundAudio.addEventListener('ended', function () {
+    this.currentTime = 0;
+    this.play();
+    console.log('playing again')
+  }, false);
+  backgroundAudio.play()
+  backgroundAudio.volume = 0.3
 
 
 ReactDOM.render(
