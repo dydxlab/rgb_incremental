@@ -129,8 +129,8 @@ function App() {
       
           </path>
           <path d="M61,53c0-.964-.123-9.459-4.4-10.978-2.728-.969-6.12,1.109-10.375,6.348a1,1,0,0,0-.119,1.077c.14.278,1.055,1.838,4.146,3.056a33.757,33.757,0,0,1-.8,8.963,1.963,1.963,0,0,0,.327,1.734,2,2,0,0,0,1.605.8h4.6a1.978,1.978,0,0,0,1.434-.609,2.033,2.033,0,0,0,.565-1.478,51.524,51.524,0,0,0-1.064-8.036C57.867,53.95,58.878,54,60,54A1,1,0,0,0,61,53Zm-5.02,9-4.608.015a35.888,35.888,0,0,0,.9-8.865,23.808,23.808,0,0,0,2.557.506A50.855,50.855,0,0,1,55.98,62ZM48.289,49.01c4.389-5.216,6.662-5.449,7.64-5.1,2.171.77,2.885,5.49,3.038,8.081C51.986,51.815,49.219,49.917,48.289,49.01Z">
-          <animateTransform attributeName="transform" attributeType="XML" type="skewY" values="1;-1;1;-1;1;" additive="sum" repeatCount="indefinite" dur="2s" fill="freeze"/>
-          <animateTransform attributeType="xml" attributeName="transform" type="rotate" values="-1, 20, 80;1, 20,80;-1,20,80" dur="2s" additive="sum" repeatCount="indefinite" />
+          <animateTransform attributeName="transform" attributeType="XML" type="skewY" values="0;-2;0;-2;0;" additive="sum" repeatCount="indefinite" dur="3s" fill="freeze"/>
+          <animateTransform attributeType="xml" attributeName="transform" type="rotate" values="-1, 20, 80;1, 20,80;-1,20,80" dur="3s" additive="sum" repeatCount="indefinite" />
           </path>
         
         <animate attributeName="fill" values="b2b2b2;704cb6;b2b2b2;" dur="8s" repeatCount="indefinite"/>
