@@ -5,7 +5,7 @@ import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-
+/*
 const backgroundAudio = new Audio("./MushroomBluegrass.mp3")
   backgroundAudio.addEventListener('ended', function () {
     this.currentTime = 0;
@@ -15,7 +15,15 @@ const backgroundAudio = new Audio("./MushroomBluegrass.mp3")
   backgroundAudio.play()
   backgroundAudio.volume = 0.3
 
-
+  const backgroundAudio2 = new Audio("./MushroomBluegrass.mp3")
+  backgroundAudio2.addEventListener('ended', function () {
+    this.currentTime = 0;
+    this.play();
+    console.log('playing again')
+  }, false);
+  backgroundAudio2.play()
+  backgroundAudio2.volume = 0.3
+*/
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>

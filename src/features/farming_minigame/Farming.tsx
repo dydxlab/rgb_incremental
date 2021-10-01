@@ -111,6 +111,14 @@ export const Farming: FunctionComponent = () => {
   function runLoop() {
     setTimeout(() => dispatch(startGrid()), 100);
     setTimeout(() => dispatch(enableButtons()), 100);
+    let mbg = document.getElementById('mushbg');
+    if(mbg){
+      (mbg as HTMLAudioElement).volume = 0.1
+    }
+    if(mbg){
+      (mbg as HTMLAudioElement).play()
+    } 
+    
 
   }
 
