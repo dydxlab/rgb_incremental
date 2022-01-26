@@ -139,7 +139,7 @@ function App() {
       
 
         </svg>
-        <Farming/>
+        <GameOver/>
         </div>
       </header>
       
