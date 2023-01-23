@@ -111,7 +111,7 @@ export const Draft: FunctionComponent = () => {
           dispatch(incrementBlue());
           dispatch(incrementHP());
         },
-        80);
+        1000);
       dispatch(setGameLoopIntervals(intval))
       audio.volume = 0.2;
       audio.play();
