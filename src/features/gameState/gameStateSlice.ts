@@ -86,9 +86,9 @@ export interface GameState {
 
 const initialState: GameState = {
   resources: {
-    red: 1000000, // 0
-    green: 10000000, // 20
-    blue: 100000003, //3
+    red: 0, // 0
+    green: 20, // 20
+    blue: 3, //3
     hp: 100
   },
   boss: {
